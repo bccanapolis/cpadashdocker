@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="header">
+                <select id="graficoChart" class="form-control select-title" onchange="filterChart.loadCampus(); filterChart.recreateChart()"
+                    name="grafico">
+                    <option value="0">Todos</option>
+                </select>
+                <p class="category"></p>
+            </div>
+            <div class="content">
+                <form action="" method="POST">
+                    <div class="row">
+                        <!-- <div class="col-md-3 form-group">
+                          <label for="temaChart">Tema</label>
+                          <select class="form-control" name="" id="temaChart"></select>
+                        </div> -->
+
+                        <div class="col-md-4 form-group">
+                            <label for="campusChart">Campus</label>
+                            <select class="form-control" onchange="filterChart.loadCursos(); filterChart.updateChart();"
+                                name="campus" id="campusChart">
+                                <option value="0">Todos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5 form-group">
+                            <label for="cursoChart">Curso</label>
+                            <select disabled class="form-control" onchange="filterChart.updateChart()" name="curso"
+                                id="cursoChart">
+                                <option value="0" selected>Todos</option>
+                            </select>
+                        </div>
+                        <!-- <div class="col-md-3 form-group">
+                          <label for="segmentoChart">Segmento</label><select name="" id="segmentoChart" name="segmentos" class="form-control">
+                            <optgroup label="Topico 1">
+                              <option value="0">Hello</option>
+                            </optgroup>
+                            <optgroup label="Topico 2">
+                              <option value="0">Hello 2</option>
+                            </optgroup>
+                          </select>
+                        </div> -->
+                    </div>
+                </form>
+                <div id="chart-place">
+                    <div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>
+                </div>
+
+                <hr>
+                <table id="tableChart" class="table table-hover table-striped">
+
+                </table>
+                <hr>
+                <div class="footer">
+                    <div class="stats">
+                        <i class="fa fa-clock-o"></i> Dados relacionadas à 2018.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var filterChart = null;
+    window.onload = function () {
+        filterChart = new FilterChart();
+    }
+</script>
+{% endblock %}

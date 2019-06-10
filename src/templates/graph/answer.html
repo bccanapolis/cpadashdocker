@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form action="/answer" method="post">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="header">
+                        <div class="title">Responda as perguntas</div>
+                    </div>
+
+                    <div class="content">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nomePessoa" >Nome Completo</label>
+                                    <input type="text" class="form-control" id="nomePessoa" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Campus</label>
+                                    <select onload="selectCurso()" onchange="selectCurso()" class="form-control"
+                                            id="campusList" name="campus" required>
+                                        {% for x in campus %}
+                                            <option value="{{ x.id }}">{{ x.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Segmento</label>
+                                    <select class="form-control" id="segmentoPessoa" name="segmento" required>
+                                        {% for x in tiposPessoa %}
+                                            <option value="{{ x.id }}">{{ x.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Curso</label>
+                                    <select class="form-control" id="cursosList" name="curso" required>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="header">
+                        <div class="title">Perguntas</div>
+                    </div>
+                    <div class="content">
+                        <div class="row">
+                            {% for pergunta in perguntas %}
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <p class="h3">
+                                            {{ pergunta.titulo }}
+                                        </p>
+                                        {% if pergunta.id != 15 %}
+                                            <div class="row">
+                                                <div class="form-check col-xs-2">
+                                                    <input class="form-check-input" type="radio"
+                                                           name="resposta-{{ pergunta.id }}"
+                                                           id="exampleRadios1" value="sim" checked>
+                                                    <label class="form-check-label" for="exampleRadios1">
+                                                        Sim
+                                                    </label>
+                                                </div>
+                                                <div class="form-check col-xs-2">
+                                                    <input class="form-check-input" type="radio"
+                                                           name="resposta-{{ pergunta.id }}"
+                                                           id="exampleRadios2" value="nao">
+                                                    <label class="form-check-label" for="exampleRadios2">
+                                                        Não
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <textarea class="form-control" placeholder="Critica ou sugestão"
+                                                      name="resposta-{{ pergunta.id }}" id="sugestaoField"
+                                                      rows="3"></textarea>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <input class="btn btn-info btn-fill pull-right" type="submit" value="Envia">
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        window.onload = () => {
+            selectCurso();
+        };
+        let request = JSON.parse('{{ cursos  | safe }}');
+
+        function selectCurso() {
+            let campus = $("#campusList").val();
+            $("#cursosList").empty();
+            request.forEach(curso => {
+                if (curso.campus == campus) {
+                    $("#cursosList").append(`<option value="${curso.id}">${curso.nome}</option>`);
+                }
+            });
+            $("#cursosList").children().length == 0 ? $("#cursosList").prop('disabled', 'disabled') : $("#cursosList").prop('disabled', false);
+
+        }
+    </script>
+{% endblock %}
