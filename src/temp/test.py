@@ -15,7 +15,7 @@ con = psy.connect(
     database='postgres',
     user='postgres',
     password='postgres',
-    host='localhost',
+    host='db',
     port=5432,
 )
 
@@ -76,10 +76,10 @@ def addCampus():
             unique_list.append(x)
 
     for i in range(0, len(unique_list)):
-        string = 'insert into public."graph_campus" (id, nome) values (DEFAULT, \'{}\') returning id'.format(unique_list[i])
+        string = 'insert into graph_campus (id, nome) values (DEFAULT, \'{}\') returning id'.format(unique_list[i])
         cur.execute(string)
         idCurso = cur.fetchone()[0]
-        cur.execute("insert into public.graph_curso (id, nome, campus_id) values (DEFAULT, 'Não Informado', %s)", [idCurso])
+        cur.execute("insert into graph_curso (id, nome, campus_id) values (DEFAULT, 'Não Informado', %s)", [idCurso])
         con.commit()
         print("Inserido campus", str(unique_list[i]))
 
@@ -87,17 +87,17 @@ def addCampus():
 def addCursos():
     cursos = getCursosCampus()
     for x, v in cursos.items():
-        cur.execute('select id from public."graph_campus" where nome = \'{}\''.format(x))
+        cur.execute('select id from graph_campus where nome = \'{}\''.format(x))
         cursorid = cur.fetchone()
         for y in v:
-            cur.execute('insert into public.graph_curso (id, nome, campus_id) values (DEFAULT ,\'{}\', {})'.format(y, cursorid[0]))
+            cur.execute('insert into graph_curso (id, nome, campus_id) values (DEFAULT ,\'{}\', {})'.format(y, cursorid[0]))
             con.commit()
             print("Inserido curso", y)
     con.commit()
 
 def addSegmentos():
     # adiciona segmentos de pessoas
-    cur.execute("insert into public.graph_segmento (id, nome) values (DEFAULT, 'Docente'), (DEFAULT, 'Estudante'), (DEFAULT, 'Técnico-Administrativo')")
+    cur.execute("insert into graph_segmento (id, nome) values (DEFAULT, 'Docente'), (DEFAULT, 'Estudante'), (DEFAULT, 'Técnico-Administrativo')")
     con.commit()
     print("Inserido segmentos: Estudante, Docente e Técnico-Administrativo")
 
@@ -131,12 +131,12 @@ def getCursosCampus():
 def addPerguntas():
     # adiciona perguntas ao banco
     for x in range(20, 36):
-        string = 'insert into public."graph_pergunta" (id, titulo) values (DEFAULT,\'{}\')'.format(sheet.cell_value(0, x).replace('\xa0', ''))
+        string = 'insert into graph_pergunta (id, titulo) values (DEFAULT,\'{}\')'.format(sheet.cell_value(0, x).replace('\xa0', ''))
         cur.execute(string)
         con.commit()
 
 def addPessoa(segmento):
-    cur.execute("INSERT INTO cpadash.public.\"graph_pessoa\" (id, nome, segmento_id) values (DEFAULT, '', %s) RETURNING id", [segmento])
+    cur.execute("INSERT INTO graph_pessoa (id, nome, segmento_id) values (DEFAULT, '', %s) RETURNING id", [segmento])
     idPessoa = cur.fetchone()[0]
     con.commit()
     return idPessoa
@@ -144,22 +144,22 @@ def addPessoa(segmento):
 def addPessoaCurso(linha, campus, pessoa):
     idCurso = 0
     if (sanitizeCurso(linha) != ''):
-        cur.execute('select id, nome from public.graph_curso where campus_id = {} and nome = \'{}\''.format(campus, sanitizeCurso(linha)))
+        cur.execute('select id, nome from graph_curso where campus_id = {} and nome = \'{}\''.format(campus, sanitizeCurso(linha)))
         idCurso = cur.fetchone()[0]
-        cur.execute("insert into public.graph_pessoacurso (id, curso_id, pessoa_id) values (DEFAULT, %s,%s)", [idCurso, pessoa])
+        cur.execute("insert into graph_pessoacurso (id, curso_id, pessoa_id) values (DEFAULT, %s,%s)", [idCurso, pessoa])
         con.commit()
 
     else:
-        cur.execute('select id, nome from public.graph_curso where campus_id = {} and nome = \'Não Informado\''.format(campus))
+        cur.execute('select id, nome from graph_curso where campus_id = {} and nome = \'Não Informado\''.format(campus))
         idCursoNulo = cur.fetchone()[0]
-        cur.execute("insert into public.graph_pessoacurso (id, curso_id, pessoa_id) values (DEFAULT, %s,%s)", [idCursoNulo, pessoa])
+        cur.execute("insert into graph_pessoacurso (id, curso_id, pessoa_id) values (DEFAULT, %s,%s)", [idCursoNulo, pessoa])
         con.commit()
     
     return idCurso
 
 
 def addParticipacaoPergunta(pergunta, resposta, pessoa):
-    cur.execute("INSERT INTO public.graph_participacaopergunta (id, resposta, pergunta_id, pessoa_id) values (DEFAULT, %s, %s, %s) RETURNING id", [resposta, pergunta, pessoa])
+    cur.execute("INSERT INTO graph_participacaopergunta (id, resposta, pergunta_id, pessoa_id) values (DEFAULT, %s, %s, %s) RETURNING id", [resposta, pergunta, pessoa])
     idParticipacao = cur.fetchone()[0]
 
     return (idParticipacao is not None)
@@ -167,10 +167,10 @@ def addParticipacaoPergunta(pergunta, resposta, pessoa):
 
 #add participacao
 def addParticipacao():
-    cur.execute("select * from public.graph_segmento")
+    cur.execute("select * from graph_segmento")
     holdSeg = cur.fetchall()
     segmentos = {holdSeg[0][1]: holdSeg[0][0], holdSeg[1][1]: holdSeg[1][0], holdSeg[2][1]: holdSeg[2][0]}
-    cur.execute("select * from public.graph_campus")
+    cur.execute("select * from graph_campus")
     campuses = {}
     for i in cur.fetchall():
         campuses[i[1]] = i[0]
@@ -190,19 +190,19 @@ def addParticipacao():
 
         for x in range(1,len(respostas)+1):
             addParticipacaoPergunta(x, respostas[x], idPessoa)
-    cur.execute("update public.graph_participacaopergunta set resposta = 'Não' where resposta = 'nao'")
-    cur.execute("update public.graph_participacaopergunta set resposta = 'Sim' where resposta = 'sim'")
+    cur.execute("update graph_participacaopergunta set resposta = 'Não' where resposta = 'nao'")
+    cur.execute("update graph_participacaopergunta set resposta = 'Sim' where resposta = 'sim'")
     cur.execute("update graph_segmento set nome = 'Discente' where nome = 'Estudante'");
     con.commit()
         
-# addSegmentos()
-# addCampus()
+addSegmentos()
+addCampus()
 addAlunoCurso()
-# addCursos()
-# addPerguntas()
-# addGrafico()
+addCursos()
+addPerguntas()
+addGrafico()
 
 
 
-# addParticipacao()
+addParticipacao()
 con.close()

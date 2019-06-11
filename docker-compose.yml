@@ -4,7 +4,7 @@ services:
     image: nginx:latest
     container_name: ng01
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - ./src:/src
       - ./config/nginx:/etc/nginx/conf.d
@@ -14,14 +14,14 @@ services:
   web:
     build: .
     container_name: dg01
-    command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:8000"
+    command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:80"
     depends_on:
       - db
     volumes:
       - ./src:/src
       - /static:/static
     expose:
-      - "8000"
+      - "80"
 
   db:
     image: postgres:alpine
