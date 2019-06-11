@@ -12,10 +12,10 @@ from collections import defaultdict
 # )
 
 con = psy.connect(
-    database='cpadash',
+    database='postgres',
     user='postgres',
-    password='postgresql',
-    host='localhost',
+    password='postgres',
+    host='db',
     port=5432,
 )
 
