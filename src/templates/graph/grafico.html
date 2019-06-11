@@ -5,8 +5,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="header">
-                <select id="graficoChart" class="form-control select-title" onchange="filterChart.loadCampus(); filterChart.recreateChart()"
-                    name="grafico">
+                <select id="graficoChart" class="form-control select-title" name="grafico">
                     <option value="0">Todos</option>
                 </select>
                 <p class="category"></p>
@@ -21,15 +20,13 @@
 
                         <div class="col-md-4 form-group">
                             <label for="campusChart">Campus</label>
-                            <select class="form-control" onchange="filterChart.loadCursos(); filterChart.updateChart();"
-                                name="campus" id="campusChart">
+                            <select class="form-control" name="campus" id="campusChart">
                                 <option value="0">Todos</option>
                             </select>
                         </div>
-                        <div class="col-md-5 form-group">
+                        <div style="display: none;" id="view_hide" class="col-md-5 form-group">
                             <label for="cursoChart">Curso</label>
-                            <select disabled class="form-control" onchange="filterChart.updateChart()" name="curso"
-                                id="cursoChart">
+                            <select disabled class="form-control" name="curso" id="cursoChart">
                                 <option value="0" selected>Todos</option>
                             </select>
                         </div>
@@ -65,8 +62,29 @@
 </div>
 <script>
     var filterChart = null;
+    
+
     window.onload = function () {
+        function viewHide(){
+            if($("#graficoChart").val() == 1)
+                $("#view_hide").hide()
+            else
+                $("#view_hide").show()
+        }
         filterChart = new FilterChart();
+        $("#graficoChart").on("change", () => {
+            filterChart.loadCampus();
+            filterChart.recreateChart();
+            viewHide()
+        })
+        $("#campusChart").on("change", () => {
+            filterChart.loadCursos();
+            filterChart.updateChart();
+        })
+        $("#cursoChart").on("change", () => {
+            filterChart.updateChart();
+        })
+        
     }
 </script>
 {% endblock %}

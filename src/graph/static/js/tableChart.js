@@ -40,14 +40,28 @@ class TableChart {
 class TableChartRoles {
   constructor(data) {
     this.rawData = data;
-    this.labels = ['Campus', 'Total', 'Porcentagem'];
     this.data = new Array();
-    this.sanitizeData();
+    if($("#campusChart").val() == 0){
+      this.sanitizeDataCampus();
+    }else{
+      this.sanitizeDataCurso();
+    }
+    
     TableChart.createTable(this.labels, this.data);
   }
-  sanitizeData() {
+  sanitizeDataCurso() {
     let total = 0;
-
+    this.labels = ['Curso', 'Total', 'Porcentagem'] ;
+    this.rawData.forEach(item => {
+      total += item.count;
+    })
+    this.rawData.forEach(item => {
+      this.data.push({ campus: item.curso, total: item.count, porcentagem: Math.round(item.count * 100 / total) + "%" })
+    })
+  }
+  sanitizeDataCampus() {
+    let total = 0;
+    this.labels = ['Campus', 'Total', 'Porcentagem'];
     this.rawData.forEach(item => {
       total += item.count;
     })

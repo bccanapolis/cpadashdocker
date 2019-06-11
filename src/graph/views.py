@@ -17,10 +17,10 @@ import psycopg2 as psy
 # )
 
 con = psy.connect(
-    database='cpadash',
+    database='postgres',
     user='postgres',
-    password='postgresql',
-    host='localhost',
+    password='postgres',
+    host='db',
     port=5432,
 )
 
@@ -93,9 +93,13 @@ def apigrafico(request):
     grafico = [{'id': grafico['id'], 'titulo':grafico['titulo'], 'numero':grafico['numero']}
                for grafico in Grafico.objects.values('id', 'titulo', 'numero').filter(numero=db_view)]
     if db_view == '1':
-        sql = list(fetch_view1())
+        sql = list(fetch_view1(query_campus))
+        print(sql)
         for row in range(0, len(sql)):
-            data.append({'count': sql[row][0], 'campus': sql[row][1]})
+            if(query_campus == '0'):
+                data.append({'count': sql[row][0], 'campus': sql[row][1]})
+            else:
+                data.append({'count': sql[row][0], 'campus': sql[row][1],'curso':sql[row][2]})
     else:
         sql = list(fetch_view(db_view, query_campus, query_curso))
         for row in range(0, len(sql)):

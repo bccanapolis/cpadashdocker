@@ -15,11 +15,16 @@ def fetch_view(view, campus, curso):
     return row
 
 
-def fetch_view1():
+def fetch_view1(campus):
+    print(campus)
     with connection.cursor() as cursor:
-        cursor.execute(
-            "select sum(quant) as quant, campus from public.graph_view1 group by campus having sum(quant) > 0 order by campus ;")
-        row = cursor.fetchall()
+        if campus == "0" or campus == None:
+            cursor.execute(
+            'select sum(quant) as quant, campus from public.graph_view1 group by campus having sum(quant) > 0 order by campus ;')
+            row = cursor.fetchall()
+        else:
+            cursor.execute('select sum(quant) as quant, campus, curso from public.graph_view1 where campus_id = {} group by campus, curso having sum(quant) > 0 order by campus;'.format(campus))
+            row = cursor.fetchall()
     return row
 
 

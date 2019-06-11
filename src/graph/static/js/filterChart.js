@@ -31,6 +31,7 @@ class FilterChart {
     $.get(`/api/campus?grafico=${$("#graficoChart").val()}`, result => {
       this.campus = result.campus;
       this.appendCampus();
+      this.loadCursos();
     });
   }
   appendCampus() {
@@ -87,7 +88,7 @@ class FilterChart {
     switch (grafico) {
       case 1:
         console.log(this.chart);
-        this.chart.updateChart({ view: grafico });
+        this.chart.updateChart({ view: grafico, campus });
         break;
       default:
         this.chart.updateChart({ view: grafico, curso, campus }, campus != 0);

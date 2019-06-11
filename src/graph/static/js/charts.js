@@ -291,40 +291,54 @@ class ChartPieRoles extends ChartGeneric {
     this.getDataAPI(this.link)
       .then(data => {
         this.rawData = data;
-        this.canvas = this.chartInit(this.sanitizeData(this.rawData));
-        this.canvas.render();
+        let res = this.sanitizeData(this.rawData);
+        this.chartInit(res)
+        
       })
-      .then(() => {});
+      .then(() => {
+        this.chart.render();
+      });
   }
   updateChart(link) {
-    console.log(link);
     this.link = link;
     this.getDataAPI(this.link).then(data => {
+      
       this.rawData = data;
       this.updateRoles();
-      this.noTotal = noTotal;
-      this.series = this.sanitizeData(this.roles, this.rawData);
+      this.noTotal = false;
+      if($("#campusChart").val() == 0){
+        this.series = this.sanitizeData(this.rawData);
+        this.chart.updateOptions({
+          labels: this.series.campus  
+        });
+      }else{
+        this.series = this.sanitizeDataCurso(this.rawData);
+        this.chart.updateOptions({
+          labels: this.series.curso  
+        });
+      }
+      
       this.chart.updateSeries(
-        [
-          {
-            name: "Sim",
-            data: this.series[0]
-          },
-          {
-            name: "Não",
-            data: this.series[1]
-          }
-        ],
-        true
+        this.series.count, true
       );
-      this.chart.updateOptions({
-        xaxis: {
-          categories: this.noTotal
-            ? this.sanitizeRoles()
-            : this.sanitizeRoles().concat("Total")
-        }
-      });
+       console.log(this.series)
     });
+  }
+  sanitizeDataCurso(data) {
+    let curso = new Array();
+    let count = new Array();
+    let total = 0;
+
+    data.forEach(item => {
+      count.push(item.count);
+      curso.push(item.curso);
+      total += item.count;
+    });
+
+    count = count.map(item => {
+      return Math.round((item * 100) / total);
+    });
+    return { curso, count };
   }
   sanitizeData(data) {
     let campus = new Array();
@@ -343,7 +357,7 @@ class ChartPieRoles extends ChartGeneric {
     return { campus, count };
   }
   chartInit(res) {
-    return new ApexCharts(
+    this.chart = new ApexCharts(
       document.querySelector(this.div),
       Object.assign(
         super.defaultOptions([

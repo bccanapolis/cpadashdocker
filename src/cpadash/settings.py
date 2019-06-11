@@ -75,10 +75,10 @@ WSGI_APPLICATION = 'cpadash.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cpadash',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'postgresql',
-        'HOST': 'localhost',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
         'PORT': 5432,
     }
 }
