@@ -12,10 +12,10 @@ from collections import defaultdict
 # )
 
 con = psy.connect(
-    database='postgres',
+    database='cpadash',
     user='postgres',
-    password='postgres',
-    host='db',
+    password='postgresql',
+    host='localhost',
     port=5432,
 )
 
@@ -195,14 +195,14 @@ def addParticipacao():
     cur.execute("update graph_segmento set nome = 'Discente' where nome = 'Estudante'");
     con.commit()
         
-# addSegmentos()
-# addCampus()
+addSegmentos()
+addCampus()
 addAlunoCurso()
-# addCursos()
-# addPerguntas()
-# addGrafico()
+addCursos()
+addPerguntas()
+addGrafico()
 
 
 
-# addParticipacao()
+addParticipacao()
 con.close()

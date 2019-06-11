@@ -17,10 +17,10 @@ import psycopg2 as psy
 # )
 
 con = psy.connect(
-    database='postgres',
+    database='cpadash',
     user='postgres',
-    password='postgres',
-    host='db',
+    password='postgresql',
+    host='localhost',
     port=5432,
 )
 

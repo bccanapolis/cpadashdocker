@@ -24,7 +24,7 @@ SECRET_KEY = 'i$c)5gglo=610)&n7&nq_0&%c&#q4ti7uh2z&sm31%q12q%7s*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web']
+ALLOWED_HOSTS = ['web','localhost','0.0.0.0']
 
 # Application definition
 
@@ -75,9 +75,10 @@ WSGI_APPLICATION = 'cpadash.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'cpadash',
         'USER': 'postgres',
-        'HOST': 'db',
+        'PASSWORD': 'postgresql',
+        'HOST': 'localhost',
         'PORT': 5432,
     }
 }

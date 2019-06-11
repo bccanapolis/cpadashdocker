@@ -1,1 +1,0 @@
-select count(resposta), curso_id, curso, resposta, segmento from public.graph_view5 where segmento_id = COALESCE(1, segmento_id) and campus_id = COALESCE(NULL, campus_id) AND curso_id = COALESCE(NULL, curso_id) group by resposta, segmento, curso_id, curso order by segmento;

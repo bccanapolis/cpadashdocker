@@ -391,15 +391,12 @@ and part.resposta != 'N/A';
 
 
 create materialized view graph_view1 as
-select pessoa.id     as pessoa,
-       campus.id as campus_id,
+select campus.id as campus_id,
        campus.nome   as campus,
-       segmento.nome as segmento,
-       segmento.id as segmento_id
-from graph_pessoa as pessoa
-         left join graph_pessoacurso as pessoacurso on pessoa.id = pessoacurso.pessoa_id
-         left join graph_segmento as segmento on pessoa.segmento_id = segmento.id
-         left join graph_curso gc on pessoacurso.curso_id = gc.id
-         left join graph_campus campus on gc.campus_id = campus.id;
-
-select * from graph_view1
+       curso.nome as curso,
+       curso.id as curso_id,
+	   curso.quant as quant
+from graph_curso curso
+left join graph_campus campus
+on curso.campus_id = campus.id;
+         
