@@ -7,11 +7,11 @@ upstream web {
 server {
   location /static/ {
     autoindex on;
-    alias /static/;
+c    alias /static/;
   }
   location / {
     proxy_pass http://web/;
   }
-  listen 8000;
+  listen 80;
   server_name localhost;
 }

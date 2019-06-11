@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
   nginx:
     image: nginx:latest
@@ -21,7 +21,7 @@ services:
       - ./src:/src
       - /static:/static
     expose:
-      - "8000"
+      - "80"
 
   db:
     image: postgres:alpine
