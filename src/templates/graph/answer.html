@@ -98,18 +98,16 @@
         window.onload = () => {
             selectCurso();
         };
-        let request = JSON.parse('{{ cursos  | safe }}');
-
+        
+        
         function selectCurso() {
-            let campus = $("#campusList").val();
-            $("#cursosList").empty();
-            request.forEach(curso => {
-                if (curso.campus == campus) {
-                    $("#cursosList").append(`<option value="${curso.id}">${curso.nome}</option>`);
-                }
-            });
-            $("#cursosList").children().length == 0 ? $("#cursosList").prop('disabled', 'disabled') : $("#cursosList").prop('disabled', false);
-
+            $.get(`/api/curso?campus=${$("#campusList").val()}&grafico=0`, (data) => {
+                $("#cursosList").empty();
+                data.cursos.forEach((item) => {
+                    let opt = $("<option></option>").val(item.id).text(item.nome)
+                    $("#cursosList").append(opt);
+                })
+            })
         }
     </script>
 {% endblock %}

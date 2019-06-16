@@ -61,7 +61,12 @@ def apicurso(request):
     campus = request.GET.get("campus")
     grafico = request.GET.get("grafico")
     cursos = []
-    if(int(grafico) != 1):
+    if(int(grafico) == 0 or grafico == None):
+        cur.execute('select nome, id from graph_curso where campus_id = {}'.format(campus))
+        for i in cur.fetchall():
+            cursos.append({'id': i[1], 'nome': i[0]})
+        
+    if(int(grafico) > 1):
         cur.execute('select distinct curso, curso_id from graph_view{} where campus_id = {} order by curso;'.format(grafico, campus))
         for i in cur.fetchall():
             cursos.append({'id': i[1], 'nome': i[0]})

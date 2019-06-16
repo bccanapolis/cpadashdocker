@@ -228,10 +228,25 @@ class ChartPie extends ChartGeneric {
       .then(data => {
         this.rawData = data;
         super.series = this.sanitizeData(this.roles, this.rawData);
-        this.canvas = this.chartInit();
-        this.canvas.render();
+        this.chart = this.chartInit();
+        
       })
-      .then(() => {});
+      .then(() => {
+        this.chart.render();
+      });
+  }
+  updateChart(link) {
+    this.link = link;
+    this.getDataAPI(this.link).then(data => {
+      console.log(data);
+      this.rawData = data;
+      this.updateRoles();
+      this.noTotal = false;
+      this.series = this.sanitizeData(this.roles, this.rawData);
+      this.chart.updateSeries(
+        this.series, true
+      );
+    });
   }
   sanitizeData(roles, data) {
     let sim = new Array(roles.length);
