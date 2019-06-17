@@ -87,7 +87,6 @@ class FilterChart {
     let grafico = parseInt($("#graficoChart").val());
     switch (grafico) {
       case 1:
-        console.log(this.chart);
         this.chart.updateChart({ view: grafico, campus });
         break;
       default:
