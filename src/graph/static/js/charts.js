@@ -130,7 +130,6 @@ class ChartBar extends ChartGeneric {
     this.chart.render();
   }
   updateChart(link, noTotal) {
-    console.log(link);
     this.link = link;
     this.getDataAPI(this.link).then(data => {
       this.rawData = data;
@@ -238,7 +237,6 @@ class ChartPie extends ChartGeneric {
   updateChart(link) {
     this.link = link;
     this.getDataAPI(this.link).then(data => {
-      console.log(data);
       this.rawData = data;
       this.updateRoles();
       this.noTotal = false;
@@ -336,7 +334,6 @@ class ChartPieRoles extends ChartGeneric {
       this.chart.updateSeries(
         this.series.count, true
       );
-       console.log(this.series)
     });
   }
   sanitizeDataCurso(data) {
