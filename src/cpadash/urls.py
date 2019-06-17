@@ -18,7 +18,7 @@ from django.urls import path, include
 from graph.views import index
 
 urlpatterns = [
-    path('cpa/', index , name='home'),
+    path('*', index , name='home'),
     path('admin/', admin.site.urls),
     path('cpa/', include('graph.urls'))
 ]
