@@ -14,6 +14,7 @@ services:
   web:
     build: .
     container_name: dg01
+    restart: always
     command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:80"
     depends_on:
       - db
@@ -26,3 +27,15 @@ services:
   db:
     image: postgres:alpine
     container_name: ps01
+    volumes:
+      - postgres_cpa:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: cpadash
+      POSTGRES_PASSWORD: cpadash2019
+      PGDATA: /var/lib/postgresql/data/pgdata
+      LANG: pt_BR.utf8
+    ports:
+      - "5433:5432"
+volumes:
+  postgres_cpa:
+    external: true

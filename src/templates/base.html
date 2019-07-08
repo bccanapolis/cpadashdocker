@@ -30,12 +30,12 @@
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <div>
-                        <a href="{% url "index" %}">
+                        <a href="/cpa/">
                             <img style="height: 180px; margin-right: auto; margin-left: auto; display: block;" class="mx-auto d-block" src="{% static 'img/ifg-logo.png' %}" alt="">
                         </a>
                     </div>
 
-                    <a href="{% url "index" %}" class="simple-text mt-10">
+                    <a href="/cpa/" class="simple-text mt-10">
                         Comissão Própria de Avaliação
                     </a>
 
@@ -43,19 +43,19 @@
 
                 <ul class="nav">
                     <li class="{% if request.resolver_match.url_name == "index" %}active{% endif %}"">
-                        <a href="{% url "index" %}">
+                        <a href="/cpa/">
                         <i class="pe-7s-home"></i>
                         <p>Home</p>
                         </a>
                     </li>
                     <li class="{% if request.resolver_match.url_name == "answer" %}active{% endif %}"">
-                        <a href="{% url "answer" %}">
+                        <a href="/cpa/answer">
                         <i class="pe-7s-edit"></i>
                         <p>Responder</p>
                         </a>
                     </li>
                     <li class="{% if request.resolver_match.url_name == "grafico" %}active{% endif %}"">
-                        <a href="{% url "grafico" %}">
+                        <a href="/cpa/grafico">
                         <i class="pe-7s-graph"></i>
                         <p> Gráfico</p>
                         </a>
@@ -79,7 +79,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="{% url "index" %}">Home</a>
+                        <a class="navbar-brand" href="/cpa/">Home</a>
                     </div>
                     <div class="collapse navbar-collapse">
 
@@ -100,7 +100,7 @@
                     <nav class="pull-left">
                         <ul>
                             <li>
-                                <a href="{% url "index" %}">
+                                <a href="/cpa/">
                                     Home
                                 </a>
                             </li>

@@ -1,0 +1,30 @@
+html,
+body,
+.tc-chart {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.tc-chart {
+  display: block;
+}
+
+.select-title {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 30px;
+  min-height: 48px;
+  border: 1px solid transparent;
+}
+
+.select-title:focus{
+  border: 1px solid transparent;
+}
+
+
+.select-title:hover{
+  border: 1px solid #E3E3E3;
+}
+

@@ -12,9 +12,9 @@ from collections import defaultdict
 # )
 
 con = psy.connect(
-    database='postgres',
+    database='cpadash',
     user='postgres',
-    password='postgres',
+    password='cpadash2019',
     host='db',
     port=5432,
 )
