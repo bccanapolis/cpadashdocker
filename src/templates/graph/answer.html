@@ -101,7 +101,7 @@
         
         
         function selectCurso() {
-            $.get(`/cpa/api/curso?campus=${$("#campusList").val()}&grafico=0`, (data) => {
+            $.get(`/api/curso?campus=${$("#campusList").val()}&grafico=0`, (data) => {
                 $("#cursosList").empty();
                 data.cursos.forEach((item) => {
                     let opt = $("<option></option>").val(item.id).text(item.nome)
