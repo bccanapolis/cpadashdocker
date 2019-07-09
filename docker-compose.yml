@@ -1,16 +1,5 @@
-version: "2"
+version: "3.5"
 services:
-  nginx:
-    image: nginx:latest
-    container_name: ng01
-    ports:
-      - "80:8000"
-    volumes:
-      - ./src:/src
-      - ./config/nginx:/etc/nginx/conf.d
-      - /static:/static
-    depends_on:
-      - web
   web:
     build: .
     container_name: dg01
@@ -23,6 +12,8 @@ services:
       - /static:/static
     expose:
       - "80"
+    environment:
+      VIRTUAL_HOST: cpa.localhost
 
   db:
     image: postgres:alpine
@@ -39,3 +30,8 @@ services:
 volumes:
   postgres_cpa:
     external: true
+
+networks:
+  default:
+    external:
+      name: nginx-proxy

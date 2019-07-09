@@ -24,7 +24,7 @@ SECRET_KEY = 'i$c)5gglo=610)&n7&nq_0&%c&#q4ti7uh2z&sm31%q12q%7s*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web','localhost','0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['web','cpa.localhost','localhost','0.0.0.0', '127.0.0.1']
 
 # Application definition
 

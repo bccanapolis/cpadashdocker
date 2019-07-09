@@ -8,7 +8,7 @@ class FilterChart {
   }
   loadGraficos() {
     $("#graficoChart").val(0);
-    $.get("/cpa/api/grafico", result => {
+    $.get("/api/grafico", result => {
       this.graficos = result.graficos;
       this.appendGraficos();
       this.recreateChart();
@@ -28,7 +28,7 @@ class FilterChart {
   }
   loadCampus() {
     $("#campusChart").val(0);
-    $.get(`/cpa/api/campus?grafico=${$("#graficoChart").val()}`, result => {
+    $.get(`/api/campus?grafico=${$("#graficoChart").val()}`, result => {
       this.campus = result.campus;
       this.appendCampus();
       this.loadCursos();
@@ -75,7 +75,7 @@ class FilterChart {
   }
   loadCursos() {
     $("#cursoChart").val(0);
-    $.get(`/cpa/api/curso?campus=${$("#campusChart").val()}&grafico=${$("#graficoChart").val()}`, result => {
+    $.get(`/api/curso?campus=${$("#campusChart").val()}&grafico=${$("#graficoChart").val()}`, result => {
       this.cursos = result.cursos;
       this.appendCursos();
       this.isCampusTodos();

@@ -94,7 +94,7 @@ class ChartGeneric {
       info.curso = 0;
     }
     return new Promise((resolve, reject) => {
-      $.get(`/cpa/api/grafico?view=${info.view}&curso=${info.curso}&campus=${info.campus}`, result => {
+      $.get(`/api/grafico?view=${info.view}&curso=${info.curso}&campus=${info.campus}`, result => {
         this.table = new TableChart(info.view, result.data, this.roles);
         resolve(result.data);
       });
