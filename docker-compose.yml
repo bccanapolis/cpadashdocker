@@ -2,7 +2,7 @@ version: "3.5"
 services:
   nginx:
     image: nginx:latest
-    container_name: ng01
+    container_name: cpa_nginx
     ports:
       - "8000:8000"
     volumes:
@@ -16,7 +16,7 @@ services:
       VIRTUAL_PORT: 8000
   web:
     build: .
-    container_name: dg01
+    container_name: cpa_app
     restart: always
     command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:8000"
     depends_on:
@@ -28,7 +28,7 @@ services:
       - "8000"
   db:
     image: postgres:alpine
-    container_name: ps01
+    container_name: cpa_db
     volumes:
       - postgres_cpa:/var/lib/postgresql/data
     environment:
