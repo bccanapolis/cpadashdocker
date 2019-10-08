@@ -38,7 +38,7 @@ def answer(request):
             "nome").values('id', 'nome')))
         tiposPessoa = Segmento.objects.all().order_by("-id").values('id', 'nome')
         campuses = Campus.objects.all().order_by('nome').values('id', 'nome')
-        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo']} for pergunta in Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("id").values('id', 'titulo', 'tipo')]
+        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo']} for pergunta in Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").values('id', 'titulo', 'tipo', 'dimensao')]
         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta in RespostaObjetiva.objects.all().order_by("-value").values('id','titulo','value')]
         return render(request, "graph/answer.html", {
             "route": segmento, "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas, "resp_objetivas": resp_objetivas
