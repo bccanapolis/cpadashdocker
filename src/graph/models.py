@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -7,17 +8,27 @@ class Segmento(models.Model):
     class Meta:
         verbose_name_plural = 'Segmento'
 
-    nome = models.CharField(max_length=32)
+    nome = models.CharField(max_length=64)
 
     def __str__(self):
         return self.nome
+
+
+class Atuacao(models.Model):
+    class Meta:
+        verbose_name_plural = 'Atuacao'
+
+    titulo = models.CharField(max_length=100)
+    segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.titulo
 
 
 class Pessoa(models.Model):
     class Meta:
         verbose_name_plural = 'Pessoa'
 
-    nome = models.CharField(max_length=70)
     segmento = models.ForeignKey(
         Segmento, null=True, on_delete=models.SET_NULL)
 
@@ -29,33 +40,41 @@ class Campus(models.Model):
     class Meta:
         verbose_name_plural = 'Campus'
 
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.nome
-
 
 
 class Curso(models.Model):
     class Meta:
         verbose_name_plural = 'Curso'
 
-    nome = models.CharField(max_length=100)
-    campus = models.ForeignKey(Campus, null=True, on_delete=models.SET_NULL)
-    quant = models.IntegerField(null=True)
+    nome = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.nome
 
 
-class Tema(models.Model):
+class Eixo(models.Model):
     class Meta:
-        verbose_name_plural = 'Tema'
+        verbose_name_plural = 'Eixo'
 
-    titulo = models.CharField(max_length=100)
+    eixo = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.titulo
+        return self.eixo
+
+
+class Dimensao(models.Model):
+    class Meta:
+        verbose_name_plural = 'Dimensao'
+
+    dimensao = models.CharField(max_length=100)
+    eixo = models.ForeignKey(Eixo, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.dimensao
 
 
 class Pergunta(models.Model):
@@ -63,10 +82,33 @@ class Pergunta(models.Model):
         verbose_name_plural = 'Pergunta'
 
     titulo = models.TextField()
-    tema = models.ForeignKey(Tema, null=True, on_delete=models.SET_NULL)
+    tipo = models.IntegerField(null=False, default=1)
+    dimensao = models.ForeignKey(Dimensao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.titulo
+
+class PerguntaSegmento(models.Model):
+    class Meta:
+        verbose_name_plural = 'PerguntaSegmento'
+
+    pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
+    segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "{} -- {}".format(self.segmento, self.pergunta)
+
+
+class CursoCampus(models.Model):
+    class Meta:
+        verbose_name_plural = 'CursoCampus'
+
+    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    quant = models.IntegerField(null=True)
+
+    def __str__(self):
+        return "{} {}".format(self.campus, self.curso)
 
 
 class PessoaCurso(models.Model):
@@ -74,7 +116,7 @@ class PessoaCurso(models.Model):
         verbose_name_plural = 'PessoaCurso'
 
     pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
-    curso = models.ForeignKey(Curso, null=True, on_delete=models.SET_NULL)
+    curso = models.ForeignKey(CursoCampus, on_delete=models.CASCADE)
 
     def __str__(self):
         return "{} {}".format(self.pessoa, self.curso)
@@ -94,22 +136,39 @@ class Grafico(models.Model):
         return self.titulo
 
 
+class RespostaObjetiva(models.Model):
+    class Meta:
+        verbose_name_plural: "RespostaObjetiva"
+
+    titulo = models.CharField(max_length=24)
+    value = models.IntegerField(null=False, default=1)
+
+    def __str__(self):
+        return self.titulo
+
+
 class ParticipacaoPergunta(models.Model):
     class Meta:
         verbose_name_plural = 'ParticipacaoPergunta'
 
     pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
-    resposta = models.TextField()
+    res_subjetiva = models.TextField(null=True)
+    res_objetiva = models.ForeignKey(RespostaObjetiva, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
 
-    def create_participacao(pessoa, segmento, curso, perguntas):
-        pessoaId = Pessoa.objects.create(
-            nome=pessoa, segmento=Segmento.objects.get(pk=segmento))
-        # pessoaCurso = PessoaCurso.objects.create(pessoa=pessoaId, curso=Curso.objects.get(pk=curso))
+    def create_participacao(segmento, curso, campus, perguntas):
+        pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento))
+        pessoaCurso = PessoaCurso.objects.create(pessoa=pessoaId, curso=CursoCampus.objects.get(campus_id=campus, curso_id=curso))
 
-        for key in perguntas:
-            ParticipacaoPergunta.objects.create(
-                pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key), resposta=perguntas[key])
+        for key, value in perguntas.dict().items():
+            if key.startswith('resposta-') and value != "":
+                perguntaKey = int(key.replace("resposta-", ""))
+                pergunta = Pergunta.objects.get(pk= perguntaKey)
+                if pergunta.tipo == 1:
+                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=perguntaKey), res_objetiva=RespostaObjetiva.objects.get(pk=value))
+                else:
+                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=perguntaKey),
+                                                        res_subjetiva=value)

@@ -3,21 +3,18 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <form action="/answer" method="post">
+            <form id="answerform" action="{{ request.path }}" method="post">
                 {% csrf_token %}
                 <div class="card">
                     <div class="header">
-                        <div class="title">Responda as perguntas</div>
+                        <h2 class="mx-auto text-center">{{ route }}</h2>
+                        <div class="title">Selecione os campos que se adequam a você:</div>
                     </div>
 
                     <div class="content">
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="nomePessoa" >Nome Completo</label>
-                                    <input type="text" class="form-control" id="nomePessoa" name="nome" required>
-                                </div>
                                 <div class="form-group">
                                     <label>Campus</label>
                                     <select onload="selectCurso()" onchange="selectCurso()" class="form-control"
@@ -30,14 +27,6 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Segmento</label>
-                                    <select class="form-control" id="segmentoPessoa" name="segmento" required>
-                                        {% for x in tiposPessoa %}
-                                            <option value="{{ x.id }}">{{ x.nome }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="form-group">
                                     <label for="">Curso</label>
                                     <select class="form-control" id="cursosList" name="curso" required>
 
@@ -49,38 +38,38 @@
                 </div>
                 <div class="card">
                     <div class="header">
-                        <div class="title">Perguntas</div>
+                        <p class="text-muted"><small>Perguntas seguidas de <b class="text-danger">*</b> são obrigatórias</small></p>
                     </div>
                     <div class="content">
                         <div class="row">
                             {% for pergunta in perguntas %}
                                 <div class="col-md-12">
-                                    <div class="form-group">
+                                    <div class="form-group" data-resp-value="{{ pergunta.id }}">
                                         <p class="h3">
                                             {{ pergunta.titulo }}
+                                            {% if pergunta.tipo == 1 %}
+                                                <span><b class="text-danger">*</b></span>
+                                            {% endif %}
                                         </p>
-                                        {% if pergunta.id != 15 %}
+                                        {% if pergunta.tipo == 1 %}
+
                                             <div class="row">
-                                                <div class="form-check col-xs-2">
-                                                    <input class="form-check-input" type="radio"
+
+                                                {% for resp in resp_objetivas %}
+                                                <div class="form-check col-xs-4 col-sm-2">
+
+                                                    <input class="form-check-input respostas" type="radio"
                                                            name="resposta-{{ pergunta.id }}"
-                                                           id="exampleRadios1" value="sim" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Sim
+                                                           id="resposta-{{ pergunta.id }}-{{ resp.value }}" value="{{ resp.id }}" required>
+                                                    <label class="form-check-label lead" for="resposta-{{ pergunta.id }}-{{ resp.value }}">
+                                                        {{ resp.titulo }}
                                                     </label>
                                                 </div>
-                                                <div class="form-check col-xs-2">
-                                                    <input class="form-check-input" type="radio"
-                                                           name="resposta-{{ pergunta.id }}"
-                                                           id="exampleRadios2" value="nao">
-                                                    <label class="form-check-label" for="exampleRadios2">
-                                                        Não
-                                                    </label>
-                                                </div>
+                                                {% endfor %}
                                             </div>
                                         {% else %}
-                                            <textarea class="form-control" placeholder="Critica ou sugestão"
-                                                      name="resposta-{{ pergunta.id }}" id="sugestaoField"
+                                            <textarea class="form-control respostas" placeholder="Critica ou sugestão"
+                                                      name="resposta-{{ pergunta.id }}" id="resposta-{{ pergunta.id }}-{{ resp.value }}"
                                                       rows="3"></textarea>
                                         {% endif %}
                                     </div>
@@ -98,8 +87,27 @@
         window.onload = () => {
             selectCurso();
         };
-        
-        
+
+        function postPerguntas($event){
+            event.preventDefault();
+            const form = document.querySelector("#answerform");
+
+            let c = Object.values(form).reduce((obj,field) => { obj[field.name] = field.value; return obj }, {})
+            let resp = Object.keys(c).filter((name) => /resposta-([0-9])*\w/.test(name));
+            let respostas = {};
+            console.log(c);
+            resp.forEach((item) => {
+                console.log(c[item.toString()])
+                respostas[item.split('-')[1]] = c[item]
+            })
+            c = {
+                campus: c.campus,
+                curso: c.curso,
+                respostas
+            }
+            console.log(c);
+        }
+
         function selectCurso() {
             $.get(`/api/curso?campus=${$("#campusList").val()}&grafico=0`, (data) => {
                 $("#cursosList").empty();

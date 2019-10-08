@@ -1,27 +1,20 @@
+import os
+
 from django.shortcuts import render
 from django.core.serializers import serialize
 from django.http import HttpResponseRedirect
-from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, Grafico
+from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, Grafico, RespostaObjetiva
 from .database import *
 import json
 from django.http import JsonResponse
 import psycopg2 as psy
 
-# con = psy.connect(
-#     database='cpadash',
-#     user='super_cpadash@cpadash',
-#     password='TROLLaudi40)',
-#     host='cpadash.postgres.database.azure.com',
-#     port=5432,
-#     sslmode='require'
-# )
-
 con = psy.connect(
-    database='cpadash',
+    database=os.getenv('DATABASE_NAME', 'cpadash'),
     user='postgres',
-    password='cpadash2019',
-    host='db',
-    port=5432,
+    password=os.getenv('DATABASE_PASS', 'cpadash#2019'),
+    host=os.getenv('DATABASE_HOST', 'localhost'),
+    port=os.getenv('DATABASE_PORT', 5432),
 )
 
 cur = con.cursor()
@@ -29,28 +22,31 @@ cur = con.cursor()
 def index(request):
     return render(request, "graph/index.html")
 
-
 def answer(request):
+    segmento = ''
+    if request.path == "/s4UkHMQC":
+        segmento = "Estudante"
+    elif request.path == "/zc3WsGum":
+        segmento = "Docente"
+    elif request.path == "/g3YTAfpT":
+        segmento = "Técnico Administrativo Câmpus"
+    elif request.path == "/4jn7qduk":
+        segmento = "Técnico Administrativo Reitoria"
+
     if request.method == "GET":
         cursos = json.dumps(list(Curso.objects.all().order_by(
-            "nome").values('id', 'nome', 'campus')))
+            "nome").values('id', 'nome')))
         tiposPessoa = Segmento.objects.all().order_by("-id").values('id', 'nome')
         campuses = Campus.objects.all().order_by('nome').values('id', 'nome')
-        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo']} for pergunta in Pergunta.objects.all().order_by("id").values('id', 'titulo')]
-
+        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo']} for pergunta in Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("id").values('id', 'titulo', 'tipo')]
+        resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta in RespostaObjetiva.objects.all().order_by("-value").values('id','titulo','value')]
         return render(request, "graph/answer.html", {
-            "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas
+            "route": segmento, "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas, "resp_objetivas": resp_objetivas
         })
     elif request.method == "POST":
         form = request.POST
-        ParticipacaoPergunta.create_participacao(form['nome'], form['segmento'], form['curso'],
-                                                 {1: form['resposta-1'], 2: form['resposta-2'], 3: form['resposta-3'],
-                                                  4: form['resposta-4'], 5: form['resposta-5'], 6: form['resposta-6'],
-                                                  7: form['resposta-7'], 8: form['resposta-8'], 9: form['resposta-9'],
-                                                  10: form['resposta-10'], 11: form['resposta-11'],
-                                                  12: form['resposta-12'], 13: form['resposta-13'],
-                                                  14: form['resposta-14'], 15: form['resposta-15', 16: form['resposta-16']]})
-        refresh_view()
+        ParticipacaoPergunta.create_participacao(segmento=segmento, curso=form['curso'], campus=form['campus'], perguntas=form)
+        #refresh_view()
         return HttpResponseRedirect("/")
 
 
@@ -62,7 +58,7 @@ def apicurso(request):
     grafico = request.GET.get("grafico")
     cursos = []
     if(int(grafico) == 0 or grafico == None):
-        cur.execute('select nome, id from graph_curso where campus_id = {}'.format(campus))
+        cur.execute('select graph_curso.nome as nome, graph_curso.id as curso_id from graph_curso left join graph_cursocampus on graph_curso.id = graph_cursocampus.curso_id left join  graph_campus on graph_cursocampus.campus_id = graph_campus.id where graph_campus.id = {}'.format(campus))
         for i in cur.fetchall():
             cursos.append({'id': i[1], 'nome': i[0]})
         

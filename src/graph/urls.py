@@ -3,8 +3,11 @@ from . import views
 
 urlpatterns = [
     path(r'', views.index, name='index'),
-    path(r'answer', views.answer, name='answer'),
-    path(r'grafico', views.grafico, name='grafico'),
+    path(r's4UkHMQC', views.answer, name='answerestudante'),
+    path(r'zc3WsGum', views.answer, name='answerdocente'),
+    path(r'4jn7qduk', views.answer, name='answerreitoria'),
+    path(r'g3YTAfpT', views.answer, name='answercampus'),
+    # path(r'grafico', views.grafico, name='grafico'),
     path(r'api/grafico', views.apigrafico, name="graficos"),
     path(r'api/curso', views.apicurso, name="graficos"),
     path(r'api/campus', views.apicampus, name="graficos")

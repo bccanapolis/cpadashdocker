@@ -42,24 +42,42 @@
                 </div>
 
                 <ul class="nav">
-                    <li class="{% if request.resolver_match.url_name == "index" %}active{% endif %}"">
+                    <li class="{% if request.resolver_match.url_name == "index" %} active{% endif %}">
                         <a href="{% url "index" %}">
                         <i class="pe-7s-home"></i>
                         <p>Home</p>
                         </a>
                     </li>
-                    <li class="{% if request.resolver_match.url_name == "answer" %}active{% endif %}"">
-                        <a href="{% url "answer" %}">
-                        <i class="pe-7s-edit"></i>
-                        <p>Responder</p>
-                        </a>
-                    </li>
-                    <li class="{% if request.resolver_match.url_name == "grafico" %}active{% endif %}"">
-                        <a href="{% url "grafico" %}">
-                        <i class="pe-7s-graph"></i>
-                        <p> Gráfico</p>
-                        </a>
-                    </li>
+{#                    <li class="{% if request.resolver_match.url_name == "answerdocente" %} active{% endif %}">#}
+{#                        <a href="{% url "answerdocente" %}">#}
+{#                        <i class="pe-7s-edit"></i>#}
+{#                        <p>Responder</p>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                <li class="{% if request.resolver_match.url_name == "answercampus" %}active{% endif %}">#}
+{#                        <a href="{% url "answercampus" %}">#}
+{#                        <i class="pe-7s-edit"></i>#}
+{#                        <p>Responder</p>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                <li class="{% if request.resolver_match.url_name == "answerestudante" %}active{% endif %}">#}
+{#                        <a href="{% url "answerestudante" %}">#}
+{#                        <i class="pe-7s-edit"></i>#}
+{#                        <p>Responder</p>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                <li class="{% if request.resolver_match.url_name == "answerreitoria" %}active{% endif %}">#}
+{#                        <a href="{% url "answerreitoria" %}">#}
+{#                        <i class="pe-7s-edit"></i>#}
+{#                        <p>Responder</p>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="{% if request.resolver_match.url_name == "grafico" %}active{% endif %}"">#}
+{#                        <a href="{% url "grafico" %}">#}
+{#                        <i class="pe-7s-graph"></i>#}
+{#                        <p> Gráfico</p>#}
+{#                        </a>#}
+{#                    </li>#}
                 </ul>
                 <a style="position: absolute; bottom: 20px; padding: 10px;" href="http://computacaoifg.com.br"><img
                         width="240" src=" {% static 'img/ciencia-computacao-pequeno.png' %}"

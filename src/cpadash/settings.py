@@ -24,7 +24,7 @@ SECRET_KEY = 'i$c)5gglo=610)&n7&nq_0&%c&#q4ti7uh2z&sm31%q12q%7s*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web','cpa.localhost','localhost','0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['web', 'cpa.localhost', 'localhost', '0.0.0.0', '127.0.0.1']
 
 # Application definition
 
@@ -75,11 +75,11 @@ WSGI_APPLICATION = 'cpadash.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cpadash',
+        'NAME': os.getenv('DATABASE_NAME', 'cpadash'),
         'USER': 'postgres',
-        'PASSWORD': 'cpadash2019',
-        'HOST': 'db',
-        'PORT': 5432,
+        'PASSWORD': os.getenv('DATABASE_PASS', 'cpadash#2019'),
+        'HOST': os.getenv('DATABASE_HOST', 'db'),
+        'PORT': os.getenv('DATABASE_PORT', 5432),
     }
 }
 
@@ -118,4 +118,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT= '/static'
+STATIC_ROOT = '/static'

@@ -12,7 +12,7 @@ services:
     depends_on:
       - web
     environment:
-      VIRTUAL_HOST: cpa.localhost
+      VIRTUAL_HOST: cpa.bcc.anapolis.ifg.edu.br
       VIRTUAL_PORT: 8000
   web:
     build: .
@@ -26,14 +26,20 @@ services:
       - /static:/static
     expose:
       - "8000"
+    environment:
+      DATABASE_PASS: cpadash#2019
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: cpadash
   db:
     image: postgres:alpine
     container_name: cpa_db
+    restart: unless-stopped
     volumes:
       - postgres_cpa:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: cpadash
-      POSTGRES_PASSWORD: cpadash2019
+      POSTGRES_PASSWORD: cpadash#2019
       PGDATA: /var/lib/postgresql/data/pgdata
       LANG: pt_BR.utf8
     ports:
