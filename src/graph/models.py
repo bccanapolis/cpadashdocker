@@ -26,7 +26,7 @@ class Atuacao(models.Model):
 
 class Lotacao(models.Model):
     class Meta:
-        verbose_name_plural = 'Lotacao'
+        verbose_name_plural = 'Lotacoes'
 
     titulo = models.CharField(max_length=100)
 
