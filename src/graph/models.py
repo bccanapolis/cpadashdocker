@@ -19,7 +19,16 @@ class Atuacao(models.Model):
         verbose_name_plural = 'Atuacao'
 
     titulo = models.CharField(max_length=100)
-    segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.titulo
+
+
+class Lotacao(models.Model):
+    class Meta:
+        verbose_name_plural = 'Lotacao'
+
+    titulo = models.CharField(max_length=100)
 
     def __str__(self):
         return self.titulo
@@ -31,6 +40,8 @@ class Pessoa(models.Model):
 
     segmento = models.ForeignKey(
         Segmento, null=True, on_delete=models.SET_NULL)
+    atuacao = models.ForeignKey(Atuacao, null=True, on_delete=models.SET_NULL)
+    lotacao = models.ForeignKey(Lotacao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.nome
@@ -83,6 +94,7 @@ class Pergunta(models.Model):
 
     titulo = models.TextField()
     tipo = models.IntegerField(null=False, default=1)
+
     dimensao = models.ForeignKey(Dimensao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
@@ -94,10 +106,11 @@ class PerguntaSegmento(models.Model):
 
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE)
+    atuacao = models.ForeignKey(Atuacao, null=True, on_delete=models.SET_NULL)
+    lotacao = models.ForeignKey(Lotacao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return "{} -- {}".format(self.segmento, self.pergunta)
-
 
 class CursoCampus(models.Model):
     class Meta:
@@ -108,7 +121,7 @@ class CursoCampus(models.Model):
     quant = models.IntegerField(null=True)
 
     def __str__(self):
-        return "{} {}".format(self.campus, self.curso)
+        return "{} -- {}".format(self.campus, self.curso)
 
 
 class PessoaCurso(models.Model):
@@ -159,9 +172,13 @@ class ParticipacaoPergunta(models.Model):
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
 
-    def create_participacao(segmento, curso, campus, perguntas):
-        pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento))
-        pessoaCurso = PessoaCurso.objects.create(pessoa=pessoaId, curso=CursoCampus.objects.get(campus_id=campus, curso_id=curso))
+    def create_participacao(naoaplica, atuacao, lotacao, segmento, curso, campus, perguntas):
+        pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento), atuacao=Atuacao.objects.get(id=int(atuacao)), lotacao=Lotacao.objects.get(id=int(lotacao)))
+        pessoaCurso = None
+        if naoaplica != None and int(naoaplica) == 1:
+            pessoaCurso = PessoaCurso.objects.create(pessoa=pessoaId, curso=CursoCampus.objects.get(campus_id=campus, curso__nome='Não Aplica'))
+        else:
+            pessoaCurso = PessoaCurso.objects.create(pessoa=pessoaId, curso=CursoCampus.objects.get(campus_id=campus, curso_id=curso))
 
         for key, value in perguntas.dict().items():
             if key.startswith('resposta-') and value != "":

@@ -7,7 +7,15 @@
                 {% csrf_token %}
                 <div class="card">
                     <div class="header">
+
                         <h2 class="mx-auto text-center">{{ route }}</h2>
+                        <p>Prezado(a) participante, seja bem-vindo(a) ao QUESTIONÁRIO DE AUTOAVALIAÇÃO INSTITUCIONAL do
+                            IFG. Este questionário é anônimo e visa a obter avaliações referentes às atividades
+                            realizadas pelo IFG no ano de 2019. As questões abordam de forma concisa e objetiva os
+                            eixos: Desenvolvimento Institucional e Políticas de Gestão. A sua opinião subsidiará a
+                            elaboração do Relatório de Autoavaliação Institucional 2019, que será divulgado à comunidade
+                            acadêmica e norteará às tomadas de decisões da gestão para melhorias no IFG. </p>
+
                         <div class="title">Selecione os campos que se adequam a você:</div>
                     </div>
 
@@ -17,7 +25,11 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Campus</label>
-                                    <select onload="selectCurso()" onchange="selectCurso()" class="form-control"
+                                    <select onload="selectCurso()" onchange="
+                                            {% if route == "Estudante" %}
+                                                selectCurso(1)
+                                            {% endif %}"
+                                            class="form-control"
                                             id="campusList" name="campus" required>
                                         {% for x in campus %}
                                             <option value="{{ x.id }}">{{ x.nome }}</option>
@@ -25,10 +37,27 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 {% if route != "Estudante" %} hidden {% endif %}">
                                 <div class="form-group">
-                                    <label for="">Curso</label>
+                                    <label for="cursosList">Curso</label>
                                     <select class="form-control" id="cursosList" name="curso" required>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 {% if route == "Estudante" or route == "Docente" %} hidden {% endif %}">
+                                <div class="form-group">
+                                    <label for="lotacaoList">Lotação</label>
+                                    <select class="form-control" onchange="selectLotacao()" id="lotacaoList"
+                                            name="lotacao" required>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 {% if route != "Docente" %} hidden {% endif %}">
+                                <div class="form-group">
+                                    <label for="atuacaoList">Atuação</label>
+                                    <select class="form-control" id="atuacaoList" name="atuacao" required>
 
                                     </select>
                                 </div>
@@ -38,42 +67,49 @@
                 </div>
                 <div class="card">
                     <div class="header">
-                        <p class="text-muted"><small>Perguntas seguidas de <b class="text-danger">*</b> são obrigatórias</small></p>
+                        <p class="text-muted"><small>Perguntas seguidas de <b class="text-danger">*</b> são obrigatórias</small>
+                        </p>
                     </div>
                     <div class="content">
-                        <div class="row">
+                        <div class="row" id="perguntaList">
                             {% for pergunta in perguntas %}
-                                <div class="col-md-12">
-                                    <div class="form-group" data-resp-value="{{ pergunta.id }}">
-                                        <p class="h3">
-                                            {{ pergunta.titulo }}
+                                {% if pergunta.lotacao != 'Laboratório' and pergunta.lotacao != 'Biblioteca' %}
+                                    <div class="col-md-12">
+                                        <div class="form-group" data-resp-value="{{ pergunta.id }}">
+                                            <p class="h3">
+                                                {{ pergunta.titulo }}
+                                                {% if pergunta.tipo == 1 %}
+                                                    <span><b class="text-danger">*</b></span>
+                                                {% endif %}
+                                            </p>
                                             {% if pergunta.tipo == 1 %}
-                                                <span><b class="text-danger">*</b></span>
-                                            {% endif %}
-                                        </p>
-                                        {% if pergunta.tipo == 1 %}
 
-                                            <div class="row">
+                                                <div class="row">
 
-                                                {% for resp in resp_objetivas %}
-                                                <div class="form-check col-xs-4 col-sm-2">
+                                                    {% for resp in resp_objetivas %}
+                                                        <div class="form-check col-xs-4 col-sm-2">
 
-                                                    <input class="form-check-input respostas" type="radio"
-                                                           name="resposta-{{ pergunta.id }}"
-                                                           id="resposta-{{ pergunta.id }}-{{ resp.value }}" value="{{ resp.id }}" required>
-                                                    <label class="form-check-label lead" for="resposta-{{ pergunta.id }}-{{ resp.value }}">
-                                                        {{ resp.titulo }}
-                                                    </label>
+                                                            <input class="form-check-input respostas" type="radio"
+                                                                   name="resposta-{{ pergunta.id }}"
+                                                                   id="resposta-{{ pergunta.id }}-{{ resp.value }}"
+                                                                   value="{{ resp.id }}" required>
+                                                            <label class="form-check-label lead"
+                                                                   for="resposta-{{ pergunta.id }}-{{ resp.value }}">
+                                                                {{ resp.titulo }}
+                                                            </label>
+                                                        </div>
+                                                    {% endfor %}
                                                 </div>
-                                                {% endfor %}
-                                            </div>
-                                        {% else %}
-                                            <textarea class="form-control respostas" placeholder="Critica ou sugestão"
-                                                      name="resposta-{{ pergunta.id }}" id="resposta-{{ pergunta.id }}-{{ resp.value }}"
-                                                      rows="3"></textarea>
-                                        {% endif %}
+                                            {% else %}
+                                                <textarea class="form-control respostas"
+                                                          placeholder="Critica ou sugestão"
+                                                          name="resposta-{{ pergunta.id }}"
+                                                          id="resposta-{{ pergunta.id }}"
+                                                          rows="3"></textarea>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                </div>
+                                {% endif %}
                             {% endfor %}
                         </div>
                         <input class="btn btn-info btn-fill pull-right" type="submit" value="Envia">
@@ -84,37 +120,93 @@
         </div>
     </div>
     <script>
-        window.onload = () => {
+
+        let perguntas = {{ perguntas|safe }};
+        let resp_objetivas = {{ resp_objetivas|safe }};
+
+        window.onload = function () {
             selectCurso();
-        };
-
-        function postPerguntas($event){
-            event.preventDefault();
-            const form = document.querySelector("#answerform");
-
-            let c = Object.values(form).reduce((obj,field) => { obj[field.name] = field.value; return obj }, {})
-            let resp = Object.keys(c).filter((name) => /resposta-([0-9])*\w/.test(name));
-            let respostas = {};
-            console.log(c);
-            resp.forEach((item) => {
-                console.log(c[item.toString()])
-                respostas[item.split('-')[1]] = c[item]
-            })
-            c = {
-                campus: c.campus,
-                curso: c.curso,
-                respostas
-            }
-            console.log(c);
         }
 
-        function selectCurso() {
-            $.get(`/api/curso?campus=${$("#campusList").val()}&grafico=0`, (data) => {
+        function selectLotacao() {
+            let selectedLotacao = $("#lotacaoList option:selected").text()
+
+            $("#perguntaList").empty();
+            perguntas.forEach((item) => {
+                if (item.lotacao == selectedLotacao || item.lotacao == 'Outros') {
+                    let row = $("<div></div>").addClass('col-md-12');
+                    let form = $("<div></div>").addClass('form-group');
+                    let label = $("<p></p>").addClass('h3').text(item.titulo)
+                    let txt = '';
+                    let resp = null;
+                    if (item.tipo == 1) {
+                        txt = $("<span></span>").append($("<b></b>").addClass("text-danger").text("*"));
+
+                        let divrow = $("<div></div>").addClass("row");
+                        resp_objetivas.forEach(resp => {
+                            let formcheck = $("<div></div>").addClass("form-check col-xs-4 col-sm-2")
+                            let inputcheck = $("<input></input>").addClass("form-check-input respostas").attr({
+                                type: 'radio',
+                                name: `resposta-${item.id}`,
+                                id: `resposta-${item.id}-${resp.value}`
+                            }).val(resp.id)
+                            let labelcheck = $("<label></label>").addClass('form-check-label lead').attr({for: `resposta-${item.id}-${resp.value}`}).text(resp.titulo)
+
+                            divrow.append(formcheck.append(inputcheck).append(labelcheck))
+                        })
+                        resp = divrow
+                    } else {
+                        let textarea = $("<textarea></textarea>").addClass('form-control respostas').attr({
+                            placeholder: 'Critica ou sugestao',
+                            name: `respotas-${item.id}`,
+                            id: `resposta-${item.id}`,
+                            row: '3'
+                        })
+                        resp = textarea
+                    }
+                    row.append(form.append(label.append(txt)).append(resp))
+                    $("#perguntaList").append(row);
+                }
+            })
+        }
+
+        function selectCurso(aplica) {
+            $.get(`/api/curso?campus=${$("#campusList").val()}&grafico=0&aplica=${aplica}`, (data) => {
                 $("#cursosList").empty();
                 data.cursos.forEach((item) => {
                     let opt = $("<option></option>").val(item.id).text(item.nome)
                     $("#cursosList").append(opt);
                 })
+            }).then(() => {
+                fetchAtuacao();
+            })
+        }
+
+        function fetchAtuacao() {
+            $.get(`/api/atuacao`, (data) => {
+                $("#atuacaoList").empty();
+                let main = 0
+                data.atuacao.forEach((item) => {
+                    let opt = $("<option></option>").val(item.id).text(item.nome)
+                    if (item.nome == "Outros") main = item.id
+                    $("#atuacaoList").append(opt);
+                })
+                $("#atuacaoList").val(main)
+            }).then(() => {
+                fetchLotacao();
+            })
+        }
+
+        function fetchLotacao() {
+            $.get(`/api/lotacao`, (data) => {
+                $("#lotacaoList").empty();
+                let main = 0
+                data.lotacao.forEach((item) => {
+                    let opt = $("<option></option>").val(item.id).text(item.nome)
+                    if (item.nome == "Outros") main = item.id
+                    $("#lotacaoList").append(opt);
+                })
+                $("#lotacaoList").val(main)
             })
         }
     </script>

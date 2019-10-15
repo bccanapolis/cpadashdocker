@@ -19,6 +19,9 @@ con = psy.connect(
 
 cur = con.cursor()
 
+def obrigado(request):
+    return render(request, "graph/obrigado.html ")
+
 def index(request):
     return render(request, "graph/index.html")
 
@@ -33,36 +36,56 @@ def answer(request):
     elif request.path == "/4jn7qduk":
         segmento = "Técnico Administrativo Reitoria"
 
+
+
     if request.method == "GET":
+        lotacao = request.GET.get("lotacao")
+
+
         cursos = json.dumps(list(Curso.objects.all().order_by(
             "nome").values('id', 'nome')))
+
         tiposPessoa = Segmento.objects.all().order_by("-id").values('id', 'nome')
         campuses = Campus.objects.all().order_by('nome').values('id', 'nome')
-        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo']} for pergunta in Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").values('id', 'titulo', 'tipo', 'dimensao')]
+        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'], 'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").order_by("tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta in RespostaObjetiva.objects.all().order_by("-value").values('id','titulo','value')]
         return render(request, "graph/answer.html", {
             "route": segmento, "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas, "resp_objetivas": resp_objetivas
         })
     elif request.method == "POST":
         form = request.POST
-        ParticipacaoPergunta.create_participacao(segmento=segmento, curso=form['curso'], campus=form['campus'], perguntas=form)
-        #refresh_view()
-        return HttpResponseRedirect("/")
+        naoaplica = request.POST.get("naoaplica")
+        ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'], segmento=segmento, curso=form['curso'], campus=form['campus'], perguntas=form)
+        return HttpResponseRedirect("/obrigado")
 
 
 def grafico(request):
     return render(request, 'graph/grafico.html')
 
+def apiatuacao(request):
+    atuacao = []
+    cur.execute('select id, titulo from graph_atuacao')
+    for i in cur.fetchall():
+        atuacao.append({'id': i[0], 'nome': i[1]})
+    return JsonResponse({"atuacao": atuacao})
+
+def apilotacao(request):
+    lotacao = []
+    cur.execute('select id, titulo from graph_lotacao')
+    for i in cur.fetchall():
+        lotacao.append({'id': i[0], 'nome': i[1]})
+    return JsonResponse({"lotacao": lotacao})
+
 def apicurso(request):
     campus = request.GET.get("campus")
     grafico = request.GET.get("grafico")
     cursos = []
-    if(int(grafico) == 0 or grafico == None):
-        cur.execute('select graph_curso.nome as nome, graph_curso.id as curso_id from graph_curso left join graph_cursocampus on graph_curso.id = graph_cursocampus.curso_id left join  graph_campus on graph_cursocampus.campus_id = graph_campus.id where graph_campus.id = {}'.format(campus))
+    if int(grafico) == 0 or grafico == None:
+        cur.execute('select graph_curso.nome as nome, graph_curso.id as curso_id from graph_curso left join graph_cursocampus on graph_curso.id = graph_cursocampus.curso_id left join  graph_campus on graph_cursocampus.campus_id = graph_campus.id where graph_campus.id = {} and graph_curso.nome != \'Não Aplica\' order by nome'.format(campus))
         for i in cur.fetchall():
             cursos.append({'id': i[1], 'nome': i[0]})
-        
-    if(int(grafico) > 1):
+
+    if int(grafico) > 1:
         cur.execute('select distinct curso, curso_id from graph_view{} where campus_id = {} order by curso;'.format(grafico, campus))
         for i in cur.fetchall():
             cursos.append({'id': i[1], 'nome': i[0]})
