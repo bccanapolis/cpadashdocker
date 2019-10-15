@@ -20,7 +20,7 @@ con = psy.connect(
 cur = con.cursor()
 
 def obrigado(request):
-    return render(request, "graph/obrigado.html ")
+    return render(request, "graph/thanks.html ")
 
 def index(request):
     return render(request, "graph/index.html")
