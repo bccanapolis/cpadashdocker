@@ -56,7 +56,7 @@ def answer(request):
         form = request.POST
         naoaplica = request.POST.get("naoaplica")
         ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'], segmento=segmento, curso=form['curso'], campus=form['campus'], perguntas=form)
-        return HttpResponseRedirect("/obrigado")
+        return HttpResponseRedirect("/")
 
 
 def grafico(request):
