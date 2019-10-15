@@ -138,16 +138,18 @@ INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (74
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (75, 14, 42, 0);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (76, 5, 36, 0);
 
+INSERT INTO public.graph_eixo (id, eixo) VALUES (1, 'Desenvolvimento Institucional');
+INSERT INTO public.graph_eixo (id, eixo) VALUES (2, 'Políticas de Gestão');
+INSERT INTO public.graph_eixo (id, eixo) VALUES (3, 'Infraestrutura');
+INSERT INTO public.graph_eixo (id, eixo) VALUES (4, 'Não Aplica');
+
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (1, 'Missão Institucional e PDI', 1);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (2, 'Responsabilidade Social', 1);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (3, 'Políticas de Pessoal', 2);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (4, 'Organização e Gestão da Instituição', 2);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (5, 'Infraestrutura Física', 3);
 
-INSERT INTO public.graph_eixo (id, eixo) VALUES (1, 'Desenvolvimento Institucional');
-INSERT INTO public.graph_eixo (id, eixo) VALUES (2, 'Políticas de Gestão');
-INSERT INTO public.graph_eixo (id, eixo) VALUES (3, 'Infraestrutura');
-INSERT INTO public.graph_eixo (id, eixo) VALUES (4, 'Não Aplica');
+
 
 INSERT INTO public.graph_lotacao (id, titulo) VALUES (1, 'Outros');
 INSERT INTO public.graph_lotacao (id, titulo) VALUES (2, 'Laboratório');
@@ -234,7 +236,9 @@ INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (46, 13, 6, 12, 1);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (41, 17, 6, 12, 1);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (40, 16, 6, 12, 1);
-INSERT INTO public.graph_perguntasegmeINSERT INTO public.graph_atuacao (id, titulo) VALUES (11, 'Linguística, Letras e Artes');
+INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (42, 18, 6, 12, 1);
+
+INSERT INTO public.graph_atuacao (id, titulo) VALUES (11, 'Linguística, Letras e Artes');
 INSERT INTO public.graph_atuacao (id, titulo) VALUES (10, 'Ciências Humanas');
 INSERT INTO public.graph_atuacao (id, titulo) VALUES (9, 'Ciências Sociais Aplicadas');
 INSERT INTO public.graph_atuacao (id, titulo) VALUES (8, 'Ciências Agrárias');
@@ -485,7 +489,7 @@ INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (2, 'Bom', 
 INSERT INTO public.graph_segmento (id, nome) VALUES (7, 'Estudante');
 INSERT INTO public.graph_segmento (id, nome) VALUES (1, 'Docente');
 INSERT INTO public.graph_segmento (id, nome) VALUES (6, 'Técnico Administrativo Reitoria');
-INSERT INTO public.graph_segmento (id, nome) VALUES (4, 'Técnico Administrativo Câmpus');nto (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (42, 18, 6, 12, 1);
+INSERT INTO public.graph_segmento (id, nome) VALUES (4, 'Técnico Administrativo Câmpus');
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (53, 5, 1, 12, 1);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (52, 4, 1, 12, 1);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (54, 6, 1, 12, 1);
