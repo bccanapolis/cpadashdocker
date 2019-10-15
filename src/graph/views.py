@@ -20,7 +20,7 @@ con = psy.connect(
 cur = con.cursor()
 
 def obrigado(request):
-    return render(request, "graph/thanks.html ")
+    return render(request, "thanks.html ")
 
 def index(request):
     return render(request, "graph/index.html")
@@ -60,7 +60,7 @@ def answer(request):
 
 
 def grafico(request):
-    return render(request, 'graph/grafico.html')
+    return render(request, 'graph/../templates/grafico.html')
 
 def apiatuacao(request):
     atuacao = []
