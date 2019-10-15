@@ -28,6 +28,8 @@
                                     <select onload="selectCurso()" onchange="
                                             {% if route == "Estudante" %}
                                                 selectCurso(1)
+                                            {% else %}
+                                                selectCurso(0)
                                             {% endif %}"
                                             class="form-control"
                                             id="campusList" name="campus" required>
