@@ -14,6 +14,9 @@ from django.http import JsonResponse
 def obrigado(request):
     return render(request, "graph/thanks.html ")
 
+def thanks(request):
+    return render(request, "graph/nilce.html ")
+
 
 def index(request):
     return render(request, "graph/index.html")
