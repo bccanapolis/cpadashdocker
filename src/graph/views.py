@@ -50,7 +50,7 @@ def grafico(request):
     return render(request, 'graph/grafico.html')
 
 def apiatuacao(request):
-    atuacao = [{'id':atuacao['id'], 'nome': atuacao['titulo']} for atuacao in Atuacao.objects.all()]
+    atuacao = [{'id':atuacao['id'], 'nome': atuacao['titulo']} for atuacao in Atuacao.objects.values('id', 'titulo').all()]
     return JsonResponse({"atuacao": atuacao})
 
 def apilotacao(request):
