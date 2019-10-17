@@ -20,7 +20,7 @@ services:
     restart: always
     command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:8000"
     depends_on:
-      - db
+      - db2
     volumes:
       - ./src:/src
       - /static:/static
@@ -28,10 +28,10 @@ services:
       - "8000"
     environment:
       DATABASE_PASS: cpadash2019
-      DATABASE_HOST: db
+      DATABASE_HOST: db2
       DATABASE_PORT: 5432
       DATABASE_NAME: cpadash
-  db:
+  db2:
     image: postgres:alpine
     container_name: cpa_db
     restart: unless-stopped

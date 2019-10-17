@@ -164,7 +164,7 @@ INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (6, 'O 
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (8, 'A garantia da participação democrática nas tomadas de decisões nos colegiados do IFG:', 4, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (10, 'A infraestrutura da biblioteca do IFG é:', 5, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (11, 'As condições das salas de aula (dimensão, iluminação, comodidade, recursos didáticos,dentre outros) do IFG são:', 5, 1);
-INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (12, 'A forma como os  laboratórios didáticos, necessários para o seu curso, atendem as demandas de ensino, pesquisa e extensão (considere estrutura e insumos) é:', 5, 1);
+INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (12, 'A forma como os  laboratórios didáticos, necessários para o seu curso, atendem às demandas de ensino, pesquisa e extensão (considere estrutura e insumos) é:', 5, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (13, 'A acessibilidade para pessoas com deficiência e/ou mobilidade reduzida no IFG é:', 5, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (14, 'As áreas de convivência para os estudantes no IFG são:', 5, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (16, 'A política de gestão de pessoas no IFG é:', 3, 1);
