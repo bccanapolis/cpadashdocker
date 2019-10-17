@@ -14,7 +14,6 @@ con = psy.connect(
     user='postgres',
     password=os.getenv('DATABASE_PASS', 'cpadash2019'),
     host=os.getenv('DATABASE_HOST', 'db'),
-    port=os.getenv('DATABASE_PORT', 5432),
 )
 
 cur = con.cursor()
