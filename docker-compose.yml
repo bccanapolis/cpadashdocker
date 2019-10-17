@@ -27,7 +27,7 @@ services:
     expose:
       - "8000"
     environment:
-      DATABASE_PASS: cpadash#2019
+      DATABASE_PASS: cpadash2019
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       DATABASE_NAME: cpadash
@@ -39,7 +39,7 @@ services:
       - postgres_cpa:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: cpadash
-      POSTGRES_PASSWORD: cpadash#2019
+      POSTGRES_PASSWORD: cpadash2019
       PGDATA: /var/lib/postgresql/data/pgdata
       LANG: pt_BR.utf8
     ports:

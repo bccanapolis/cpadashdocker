@@ -77,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('DATABASE_NAME', 'cpadash'),
         'USER': 'postgres',
-        'PASSWORD': os.getenv('DATABASE_PASS', 'cpadash#2019'),
+        'PASSWORD': os.getenv('DATABASE_PASS', 'cpadash2019'),
         'HOST': os.getenv('DATABASE_HOST', 'db'),
         'PORT': os.getenv('DATABASE_PORT', 5432),
     }
