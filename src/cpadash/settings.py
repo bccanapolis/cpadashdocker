@@ -79,6 +79,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': os.getenv('DATABASE_PASS', 'cpadash2019'),
         'HOST': os.getenv('DATABASE_HOST', 'db'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
 
