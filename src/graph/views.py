@@ -13,7 +13,7 @@ con = psy.connect(
     database=os.getenv('DATABASE_NAME', 'cpadash'),
     user='postgres',
     password=os.getenv('DATABASE_PASS', 'cpadash2019'),
-    host=os.getenv('DATABASE_HOST', 'localhost'),
+    host=os.getenv('DATABASE_HOST', 'db'),
     port=os.getenv('DATABASE_PORT', 5432),
 )
 
