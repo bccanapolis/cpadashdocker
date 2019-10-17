@@ -10,10 +10,10 @@ from django.http import JsonResponse
 import psycopg2 as psy
 
 con = psy.connect(
-    database=os.getenv('DATABASE_NAME', 'cpadash'),
+    database='cpadash',
     user='postgres',
-    password=os.getenv('DATABASE_PASS', 'cpadash2019'),
-    host=os.getenv('DATABASE_HOST', 'db'),
+    password='cpadash2019',
+    host= 'db',
 )
 
 cur = con.cursor()
