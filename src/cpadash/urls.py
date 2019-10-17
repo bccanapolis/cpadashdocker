@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from graph.views import index
+from .graph.views import index
 
 urlpatterns = [
     path('*', index , name='home'),
