@@ -11,15 +11,9 @@ import json
 from django.http import JsonResponse
 
 
-def obrigado(request):
-    return render(request, "graph/thanks.html ")
-
-def thanks(request):
-    return render(request, "graph/nilce.html ")
-
-
 def index(request):
-    return render(request, "graph/index.html")
+    obrigado = request.GET.get('obrigado')
+    return render(request, "graph/index.html", {'obrigado': obrigado})
 
 
 def answer(request):
@@ -56,7 +50,7 @@ def answer(request):
         ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'],
                                                  segmento=segmento, curso=form['curso'], campus=form['campus'],
                                                  perguntas=form)
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/?obrigado=true")
 
 
 def grafico(request):
@@ -106,15 +100,15 @@ def apigrafico(request):
             .filter(pergunta__tipo=1, pergunta_id=pergunta)
             .select_related('curso', 'pessoa', 'pessoacurso', 'atuacao', 'lotacao', 'segmento')
             .values(
-                'pessoa_id',
-                'pergunta__participacaopergunta__res_objetiva',
-                'pessoa__segmento__nome',
-                'pessoa__segmento_id',
-                'pessoa__pessoacurso__curso__curso__nome',
-                'res_objetiva__titulo',
-                'pessoa__atuacao__titulo',
-                'pessoa__lotacao__titulo'
-             )
+            'pessoa_id',
+            'pergunta__participacaopergunta__res_objetiva',
+            'pessoa__segmento__nome',
+            'pessoa__segmento_id',
+            'pessoa__pessoacurso__curso__curso__nome',
+            'res_objetiva__titulo',
+            'pessoa__atuacao__titulo',
+            'pessoa__lotacao__titulo'
+        )
             .annotate(count=Count('pergunta__participacaopergunta__res_objetiva'))
 
     ]
