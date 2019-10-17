@@ -60,7 +60,7 @@ def answer(request):
 
 
 def grafico(request):
-    return render(request, 'graph/../templates/grafico.html')
+    return render(request, 'graph/grafico.html')
 
 def apiatuacao(request):
     atuacao = []
