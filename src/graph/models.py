@@ -166,22 +166,28 @@ class ParticipacaoPergunta(models.Model):
 
     def create_participacao(naoaplica, atuacao, lotacao, segmento, curso, campus, perguntas):
         pessoaId = None
-        if naoaplica != None and int(naoaplica) == 1:
+        if segmento == "Técnico Administrativo Câmpus" or segmento == "Técnico Administrativo Reitoria":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
-                                  atuacao=Atuacao.objects.get(id=int(atuacao)),
+                                  atuacao=None,
                                   lotacao=Lotacao.objects.get(id=int(lotacao)),
                                   curso=CursoCampus.objects.get(campus_id=campus,
                                                                 curso__nome='Não Aplica')
                                   )
 
-        else:
+        elif segmento == "Docente":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                   atuacao=Atuacao.objects.get(id=int(atuacao)),
-                                  lotacao=Lotacao.objects.get(id=int(lotacao)),
+                                  lotacao=None,
                                   curso=CursoCampus.objects.get(campus_id=campus,
-                                                                curso_id=curso)
+                                                                curso__nome='Não Aplica')
                                   )
-        print(perguntas)
+        else:
+            pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
+                                             atuacao=None,
+                                             lotacao=None,
+                                             curso=CursoCampus.objects.get(campus_id=campus,
+                                                                           curso_id=curso)
+                                             )
         for key, value in perguntas.dict().items():
             if key.startswith('resposta-') and value != "":
                 perguntaKey = int(key.replace("resposta-", ""))
