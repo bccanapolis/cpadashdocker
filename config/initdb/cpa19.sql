@@ -64,7 +64,9 @@ INSERT INTO public.graph_curso (id, nome) VALUES (38, 'Mestrado Profissional em 
 INSERT INTO public.graph_curso (id, nome) VALUES (39, 'Especialização em Docência em Educação e Tecnologia');
 INSERT INTO public.graph_curso (id, nome) VALUES (40, 'Bacharelado em Engenharia de Produção');
 INSERT INTO public.graph_curso (id, nome) VALUES (42, 'Não Aplica');
+INSERT INTO public.graph_curso (id, nome) VALUES (43, 'Bacharelado em Informática');
 
+INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (3, 7, 43, null);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (4, 1, 1, null);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (5, 2, 2, null);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (6, 2, 3, null);

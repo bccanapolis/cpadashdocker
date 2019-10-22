@@ -88,28 +88,27 @@ def apicurso(request):
 
 def apigrafico(request):
     pergunta = request.GET.get("pergunta")
+    qs = ParticipacaoPergunta.objects.filter(pergunta__tipo=1, pergunta_id=pergunta).select_related('curso', 'pessoa',
+                                                                                                    'pessoacurso',
+                                                                                                    'atuacao',
+                                                                                                    'lotacao',
+                                                                                                    'segmento').values(
+        'pessoa_id',
+        'pergunta__participacaopergunta__res_objetiva',
+        'pessoa__segmento__nome',
+        'pessoa__segmento_id',
+        'pessoa__pessoacurso__curso__curso__nome',
+        'res_objetiva__titulo',
+        'pessoa__atuacao__titulo',
+        'pessoa__lotacao__titulo'
+    ).annotate(count=Count('pergunta__participacaopergunta__res_objetiva'))
+    print(qs.query)
     data = [
         {
             'count': dados['count'],
             'resposta': dados['res_objetiva__titulo'],
-            'curso': dados['pessoa__pessoacurso__curso__curso__nome'],
-            'segmento': dados['pessoa__segmento__nome'],
-            'atuacao': dados['pessoa__atuacao__titulo'],
-            'lotacao': dados['pessoa__lotacao__titulo']
-        } for dados in ParticipacaoPergunta.objects
-            .filter(pergunta__tipo=1, pergunta_id=pergunta)
-            .select_related('curso', 'pessoa', 'pessoacurso', 'atuacao', 'lotacao', 'segmento')
-            .values(
-            'pessoa_id',
-            'pergunta__participacaopergunta__res_objetiva',
-            'pessoa__segmento__nome',
-            'pessoa__segmento_id',
-            'pessoa__pessoacurso__curso__curso__nome',
-            'res_objetiva__titulo',
-            'pessoa__atuacao__titulo',
-            'pessoa__lotacao__titulo'
-        )
-            .annotate(count=Count('pergunta__participacaopergunta__res_objetiva'))
+            'campus': dados['pessoa__pessoacurso__curso__campus__nome']
+        } for dados in ParticipacaoPergunta.objects.all()
 
     ]
 
@@ -127,7 +126,7 @@ def apigrafico(request):
 #     grafico = [{'id': grafico['id'], 'titulo':grafico['titulo'], 'numero':grafico['numero']}
 #                for grafico in Grafico.objects.values('id', 'titulo', 'numero').filter(numero=db_view)]
 #     if db_view == '1':
-#         sql = list(fetch_view1(query_campus))
+# sql = list(fetch_view1(query_campus))
 #         print(sql)
 #         for row in range(0, len(sql)):
 #             if(query_campus == '0'):
