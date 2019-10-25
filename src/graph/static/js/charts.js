@@ -142,7 +142,7 @@ class ChartBar extends ChartGeneric {
                 },
                 yaxis: {
                     title: {
-                        text: "Porcentagem"
+                        text: this.normal ? "Porcentagem" : "Pessoas"
                     }
                 }
             })
