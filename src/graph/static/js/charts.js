@@ -6,18 +6,27 @@ class ChartGeneric {
     constructor(link, idDiv) {
         this.link = link;
         this.div = idDiv;
-        // if (this.roles.includes("-Total")) {
-        //   this.noTotal = true;
-        //   this.roles = this.roles.filter(value => {
-        //     return value != "-Total";
-        //   });
-        // }
         this.series = null;
         this.labels = ['Ótimo', 'Bom', 'Regular', 'Ruim', 'Péssimo', 'Não sei'];
         this.table = null;
+        this.normal = false;
+    }
+
+    normalize(series) {
+        for (let i = 0; i < series[0].data.length; i++) {
+            let sum = 0
+            series.forEach(item => {
+                sum += item.data[i]
+            });
+            for (let j = 0; j < series.length; j++) {
+                series[j]['data'][i] = Math.round((series[j]['data'][i] / sum * 100) * 10) / 10
+            }
+        }
+        return series
     }
 
     defaultOptions(colors = ['#008ffb', '#00e396', '#feb019', '#ff4560', '#775dd0', '#2e294e']) {
+        let normal = this.normal
         return {
             legend: {
                 position: 'bottom',
@@ -29,16 +38,13 @@ class ChartGeneric {
                 enabled: true,
                 formatter: function (val) {
                     // index.w.config.series[0].data[index.dataPointIndex] +  index.w.config.series[0].data[index.dataPointIndex]
-                    return `${Math.ceil(val)}`;
+                    return normal ? `${val}%` : `${val}`;
                 }
             },
             tooltip: {
                 y: {
-                    formatter: function (
-                        value,
-                        {series, seriesIndex, dataPointIndex, w}
-                    ) {
-                        return Math.round(value);
+                    formatter: function (val) {
+                        return normal ? `${val}%` : `${val}`;
                     }
                 }
             },
@@ -82,6 +88,7 @@ class ChartGeneric {
 class ChartBar extends ChartGeneric {
     constructor(link, idDiv) {
         super(link, idDiv);
+        super.normal = true;
         this.getDataAPI(this.link)
             .then(data => {
                 this.rawData = data;
@@ -120,12 +127,14 @@ class ChartBar extends ChartGeneric {
                 chart: {
                     height: 350,
                     type: "bar",
-                    // stacked: true
+                    // stacked: true,
+                    columnWidth: '90%'
                 },
                 plotOptions: {
                     bar: {
                         horizontal: false,
                         endingShape: 'rounded',
+                        columnWidth: '98%'
                     }
                 },
                 xaxis: {
@@ -151,6 +160,9 @@ class ChartBar extends ChartGeneric {
         let final = []
         for (let [key, value] of Object.entries(series)) {
             final.push(value)
+        }
+        if (this.normal) {
+            final = this.normalize(final)
         }
         return final
     }
