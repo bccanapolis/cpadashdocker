@@ -88,7 +88,7 @@ class ChartGeneric {
 class ChartBar extends ChartGeneric {
     constructor(link, idDiv) {
         super(link, idDiv);
-        super.normal = true;
+        // super.normal = true;
         this.getDataAPI(this.link)
             .then(data => {
                 this.rawData = data;
