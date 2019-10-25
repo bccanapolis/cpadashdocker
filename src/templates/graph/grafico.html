@@ -1,86 +1,136 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="header">
-                <select id="graficoChart" class="form-control select-title" name="grafico">
-                    <option value="0">Todos</option>
-                </select>
-                <p class="category"></p>
-            </div>
-            <div class="content">
-                <form action="" method="POST">
-                    <div class="row">
-
-                        <div class="col-md-4 form-group">
-                            <label for="campusChart">Campus</label>
-                            <select class="form-control" name="campus" id="campusChart">
-                                <option value="0">Todos</option>
-                            </select>
-                        </div>
-                        <div style="display: none;" id="view_hide" class="col-md-5 form-group">
-                            <label for="cursoChart">Curso</label>
-                            <select disabled class="form-control" name="curso" id="cursoChart">
-                                <option value="0" selected>Todos</option>
-                            </select>
-                        </div>
-                        <!-- <div class="col-md-3 form-group">
-                          <label for="segmentoChart">Segmento</label><select name="" id="segmentoChart" name="segmentos" class="form-control">
-                            <optgroup label="Topico 1">
-                              <option value="0">Hello</option>
-                            </optgroup>
-                            <optgroup label="Topico 2">
-                              <option value="0">Hello 2</option>
-                            </optgroup>
-                          </select>
-                        </div> -->
-                    </div>
-                </form>
-                <div id="chart-place">
-                    <div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="header">
+                    <select id="graficoChart" class="form-control select-title" name="grafico">
+                        <option value="0">Todos</option>
+                    </select>
+                    <p class="category"></p>
                 </div>
+                <div class="content">
+                    <form action="" method="POST">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="segmentoChart">Segmento</label>
+                                <select class="form-control" name="segmento" id="segmentoChart">
+                                    <option value="0" selected>Todos</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="campusChart">Campus</label>
+                                <select class="form-control" name="campus" id="campusChart">
+                                    <option value="0">Todos</option>
+                                </select>
+                            </div>
+                            <div style="display: none;"  id="cursoList" class="col-md-4 form-group">
+{#                            <div id="cursoList" class="col-md-4 form-group">#}
+                                <label for="cursoChart">Curso</label>
+                                <select disabled class="form-control" name="curso" id="cursoChart">
+                                    <option value="0" selected>Todos</option>
+                                </select>
+                            </div>
 
-                <hr>
-                <table id="tableChart" class="table table-hover table-striped">
+                            <div style="display: none;" id="atuacaoList" class="col-md-4 form-group">
+{#                            <div id="atuacaoList" class="col-md-4 form-group">#}
+                                <label for="atuacaoChart">Atuação</label>
+                                <select disabled class="form-control" name="atuacao" id="atuacaoChart">
+                                    <option value="0" selected>Todos</option>
+                                </select>
+                            </div>
+                            <div style="display: none;" id="lotacaoList" class="col-md-4 form-group">
+{#                            <div id="lotacaoList" class="col-md-4 form-group">#}
+                                <label for="lotacaoChart">Lotação</label>
+                                <select disabled class="form-control" name="lotacao" id="lotacaoChart">
+                                    <option value="0" selected>Todos</option>
+                                </select>
+                            </div>
 
-                </table>
-                <hr>
-                <div class="footer">
-                    <div class="stats">
-                        <i class="fa fa-clock-o"></i> Dados relacionadas à 2018.
+                        </div>
+                    </form>
+                    <div id="chart-place">
+                        <div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>
+                    </div>
+
+                    <hr>
+                    <table id="tableChart" class="table table-hover table-striped">
+
+                    </table>
+                    <hr>
+                    <div class="footer">
+                        <div class="stats">
+                            <i class="fa fa-clock-o"></i> Dados relacionadas à 2018.
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    var filterChart = null;
-    
+    <script>
+        var filterChart = null;
 
-    window.onload = function () {
-        function viewHide(){
-            if($("#graficoChart").val() == 1)
-                $("#view_hide").hide()
-            else
-                $("#view_hide").show()
+        window.onload = function () {
+
+            filterChart = new FilterChart();
+            $("#segmentoChart").on("change", () => {
+                filterChart.loadCampus();
+                filterChart.updateChart();
+                let segmento = $("#segmentoChart option:selected").text()
+                if (segmento === 'Todos') {
+                    $("#cursoList").hide()
+                    $("#atuacaoList").hide()
+                    $("#lotacaoList").hide()
+                    $("#cursoChart").val(0)
+                    $("#atuacaoChart").val(0)
+                    $("#lotacaoChart").val(0)
+                } else if (segmento === 'Estudante') {
+                    $("#cursoList").show()
+                    $("#atuacaoList").hide()
+                    $("#lotacaoList").hide()
+                    $("#atuacaoChart").val(0)
+                    $("#lotacaoChart").val(0)
+                } else if (segmento === 'Docente') {
+                    $("#cursoList").hide()
+                    $("#atuacaoList").show()
+                    $("#lotacaoList").hide()
+                    $("#cursoChart").val(0)
+                    $("#lotacaoChart").val(0)
+                } else if (segmento === 'Técnico Administrativo Câmpus') {
+                    $("#cursoList").hide()
+                    $("#atuacaoList").hide()
+                    $("#lotacaoList").show()
+                    $("#cursoChart").val(0)
+                    $("#atuacaoChart").val(0)
+                } else if (segmento === 'Técnico Administrativo Reitoria') {
+                    $("#cursoList").hide()
+                    $("#atuacaoList").hide()
+                    $("#lotacaoList").show()
+                     $("#cursoChart").val(0)
+                    $("#atuacaoChart").val(0)
+                }
+            })
+            $("#atuacaoChart").on("change", () => {
+                filterChart.updateChart();
+            })
+            $("#lotacaoChart").on("change", () => {
+                filterChart.updateChart();
+            })
+            $("#graficoChart").on("change", () => {
+                filterChart.loadSegmentos();
+                filterChart.recreateChart();
+            })
+            $("#campusChart").on("change", () => {
+                filterChart.loadCursos();
+                filterChart.loadLotacao();
+                filterChart.loadAtuacao();
+                filterChart.updateChart();
+            })
+            $("#cursoChart").on("change", () => {
+                filterChart.updateChart();
+            })
+
         }
-        filterChart = new FilterChart();
-        $("#graficoChart").on("change", () => {
-            filterChart.loadCampus();
-            filterChart.recreateChart();
-            viewHide()
-        })
-        $("#campusChart").on("change", () => {
-            filterChart.loadCursos();
-            filterChart.updateChart();
-        })
-        $("#cursoChart").on("change", () => {
-            filterChart.updateChart();
-        })
-        
-    }
-</script>
+    </script>
 {% endblock %}
