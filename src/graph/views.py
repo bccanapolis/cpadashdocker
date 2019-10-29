@@ -160,7 +160,7 @@ def apigrafico(request):
         with connection.cursor() as cursor:
             cursor.execute('refresh materialized view informacoes')
             cursor.close()
-        return JsonResponse({'msg': 'Data updated successfully!'})
+        return HttpResponseRedirect('/QthDtt4r')
     elif pergunta is None:
         with connection.cursor() as cursor:
             cursor.execute('select distinct pergunta_id, pergunta from informacoes where pergunta not like \'Caso%\' ')
