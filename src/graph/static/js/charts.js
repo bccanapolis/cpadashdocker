@@ -43,10 +43,14 @@ class ChartGeneric {
                 }
             },
             tooltip: {
+                followCursor: true,
                 y: {
                     formatter: function (val) {
                         return normal ? `${val}%` : `${val}`;
                     }
+                },
+                x: {
+                    show: true
                 }
             },
             toolbar: {

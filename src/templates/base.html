@@ -12,7 +12,7 @@
     <meta name="keywords" content="Avaliação,Comissão Própria, IFG">
     <meta name="author" content="Bruno de Araújo Alves">
 
-    <title>CPA Dashboard</title>
+    <title>CPA Dashboard {% if title %} | {{ title }} {% endif %}</title>
     {% include 'headerbase.html' %}
 </head>
 
@@ -20,18 +20,19 @@
 
 <div class="wrapper">
     <div class="sidebar" data-color="green" data-image="{% static 'img/sidebar-4.jpg' %}">
-        <div class="sidebar-wrapper">
+        <div style="position: absolute;" class="sidebar-wrapper">
             <div class="logo">
                 <div>
                     <a href="{% url "index" %}">
                         <img style="height: 180px; margin-right: auto; margin-left: auto; display: block;"
-                             class="mx-auto d-block" src="{% static 'img/ifg-logo.png' %}" alt="Logo Instituto Federal de Goiás">
+                             class="mx-auto d-block" src="{% static 'img/ifg-logo.png' %}"
+                             alt="Logo Instituto Federal de Goiás">
                     </a>
                 </div>
 
-                <a href="{% url "index" %}" class="simple-text mt-10">
+                <h1 class="lead text-center" style="margin: 0.2em;" ><a href="{% url "index" %}" style="color: white;">
                     Comissão Própria de Avaliação
-                </a>
+                </a></h1>
 
             </div>
 
@@ -42,38 +43,33 @@
                         <p>Home</p>
                     </a>
                 </li>
-                {#                    <li class="{% if request.resolver_match.url_name == "answerdocente" %} active{% endif %}">#}
-                {#                        <a href="{% url "answerdocente" %}">#}
-                {#                        <i class="pe-7s-edit"></i>#}
-                {#                        <p>Responder</p>#}
-                {#                        </a>#}
-                {#                    </li>#}
-                {#                <li class="{% if request.resolver_match.url_name == "answercampus" %}active{% endif %}">#}
-                {#                        <a href="{% url "answercampus" %}">#}
-                {#                        <i class="pe-7s-edit"></i>#}
-                {#                        <p>Responder</p>#}
-                {#                        </a>#}
-                {#                    </li>#}
-                {#                <li class="{% if request.resolver_match.url_name == "answerestudante" %}active{% endif %}">#}
-                {#                        <a href="{% url "answerestudante" %}">#}
-                {#                        <i class="pe-7s-edit"></i>#}
-                {#                        <p>Responder</p>#}
-                {#                        </a>#}
-                {#                    </li>#}
-                {#                <li class="{% if request.resolver_match.url_name == "answerreitoria" %}active{% endif %}">#}
-                {#                        <a href="{% url "answerreitoria" %}">#}
-                {#                        <i class="pe-7s-edit"></i>#}
-                {#                        <p>Responder</p>#}
-                {#                        </a>#}
-                {#                    </li>#}
-                {#                    <li class="{% if request.resolver_match.url_name == "grafico" %}active{% endif %}"">#}
-                {#                        <a href="{% url "grafico" %}">#}
-                {#                        <i class="pe-7s-graph"></i>#}
-                {#                        <p> Gráfico</p>#}
-                {#                        </a>#}
-                {#                    </li>#}
+             <li class="{% if request.resolver_match.url_name == "answerestudante" %}active{% endif %}">
+                    <a href="{% url "answerestudante" %}">
+                        <i class="pe-7s-menu"></i>
+                        <p>Estudante</p>
+                    </a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == "answerdocente" %} active{% endif %}">
+                    <a href="{% url "answerdocente" %}">
+                       <i class="pe-7s-menu"></i>
+                        <p>Docente</p>
+                    </a>
+                </li>
+                <li class="{% if request.resolver_match.url_name == "answercampus" %}active{% endif %}">
+                    <a href="{% url "answercampus" %}">
+                        <i class="pe-7s-menu"></i>
+                        <p>Técnico Câmpus</p>
+                    </a>
+                </li>
+
+                <li class="{% if request.resolver_match.url_name == "answerreitoria" %}active{% endif %}">
+                    <a href="{% url "answerreitoria" %}">
+                        <i class="pe-7s-menu"></i>
+                        <p>Técnico Reitoria</p>
+                    </a>
+                </li>
             </ul>
-            <a style="position: absolute; bottom: 20px; padding: 10px;" href="http://computacaoifg.com.br"><img
+            <a style="position: absolute; bottom: 5px; padding: 10px; margin-top: 30px;" href="http://computacaoifg.com.br"><img
                     width="240" src=" {% static 'img/ciencia-computacao-pequeno.png' %}"
                     alt="Logo Curso de Ciência da Computação - IFG Campus Anápolis"></a>
 
