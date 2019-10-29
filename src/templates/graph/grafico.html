@@ -25,8 +25,8 @@
                                     <option value="0">Todos</option>
                                 </select>
                             </div>
-                            <div style="display: none;"  id="cursoList" class="col-md-4 form-group">
-{#                            <div id="cursoList" class="col-md-4 form-group">#}
+                            <div style="display: none;" id="cursoList" class="col-md-4 form-group">
+                                {#                            <div id="cursoList" class="col-md-4 form-group">#}
                                 <label for="cursoChart">Curso</label>
                                 <select disabled class="form-control" name="curso" id="cursoChart">
                                     <option value="0" selected>Todos</option>
@@ -34,14 +34,14 @@
                             </div>
 
                             <div style="display: none;" id="atuacaoList" class="col-md-4 form-group">
-{#                            <div id="atuacaoList" class="col-md-4 form-group">#}
+                                {#                            <div id="atuacaoList" class="col-md-4 form-group">#}
                                 <label for="atuacaoChart">Atuação</label>
                                 <select disabled class="form-control" name="atuacao" id="atuacaoChart">
                                     <option value="0" selected>Todos</option>
                                 </select>
                             </div>
                             <div style="display: none;" id="lotacaoList" class="col-md-4 form-group">
-{#                            <div id="lotacaoList" class="col-md-4 form-group">#}
+                                {#                            <div id="lotacaoList" class="col-md-4 form-group">#}
                                 <label for="lotacaoChart">Lotação</label>
                                 <select disabled class="form-control" name="lotacao" id="lotacaoChart">
                                     <option value="0" selected>Todos</option>
@@ -49,8 +49,16 @@
                             </div>
 
                         </div>
+                        <div class="form-group">
+                            <label class="switch">
+                                <input id="chart-visualization" type="checkbox" onchange="changeVis();" value="true">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="small text-muted" id="chart-vis-label">Dados Reais</span>
+                        </div>
                     </form>
                     <div id="chart-place">
+
                         <div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>
                     </div>
 
@@ -71,12 +79,17 @@
     <script>
         var filterChart = null;
 
+        function changeVis($event) {
+            filterChart.updateChart($('#chart-visualization').prop('checked'))
+            $('#chart-visualization').prop('checked') ? $("#chart-vis-label").text("Dados Relativos") :  $("#chart-vis-label").text("Dados Reais")
+        }
+
         window.onload = function () {
 
             filterChart = new FilterChart();
             $("#segmentoChart").on("change", () => {
                 filterChart.loadCampus();
-                filterChart.updateChart();
+                filterChart.updateChart($('#chart-visualization').prop('checked'));
                 let segmento = $("#segmentoChart option:selected").text()
                 if (segmento === 'Todos') {
                     $("#cursoList").hide()
@@ -107,28 +120,28 @@
                     $("#cursoList").hide()
                     $("#atuacaoList").hide()
                     $("#lotacaoList").show()
-                     $("#cursoChart").val(0)
+                    $("#cursoChart").val(0)
                     $("#atuacaoChart").val(0)
                 }
             })
             $("#atuacaoChart").on("change", () => {
-                filterChart.updateChart();
+                filterChart.updateChart($('#chart-visualization').prop('checked'));
             })
             $("#lotacaoChart").on("change", () => {
-                filterChart.updateChart();
+                filterChart.updateChart($('#chart-visualization').prop('checked'));
             })
             $("#graficoChart").on("change", () => {
                 filterChart.loadSegmentos();
-                filterChart.recreateChart();
+                filterChart.recreateChart($('#chart-visualization').prop('checked'));
             })
             $("#campusChart").on("change", () => {
                 filterChart.loadCursos();
                 filterChart.loadLotacao();
                 filterChart.loadAtuacao();
-                filterChart.updateChart();
+                filterChart.updateChart($('#chart-visualization').prop('checked'));
             })
             $("#cursoChart").on("change", () => {
-                filterChart.updateChart();
+                filterChart.updateChart($('#chart-visualization').prop('checked'));
             })
 
         }

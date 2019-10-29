@@ -183,7 +183,7 @@ class FilterChart {
         }
     }
 
-    updateChart() {
+    updateChart(normal) {
         let curso = parseInt($("#cursoChart").val());
         let campus = parseInt($("#campusChart").val());
         let pergunta = parseInt($("#graficoChart").val());
@@ -191,15 +191,15 @@ class FilterChart {
         let lotacao = parseInt($("#lotacaoChart").val());
         let segmento = parseInt($("#segmentoChart").val());
         this.isCampusTodos();
-        this.chart.updateChart({pergunta, curso, campus, atuacao, lotacao, segmento});
+        this.chart.updateChart({pergunta, curso, campus, atuacao, lotacao, segmento}, normal);
     }
 
-    recreateChart() {
+    recreateChart(normal) {
         $("#chart-place")
             .empty()
             .append(
                 $('<div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>')
             );
-        this.chart = new ChartBar({pergunta: parseInt($("#graficoChart").val())}, "#graph");
+        this.chart = new ChartBar({pergunta: parseInt($("#graficoChart").val())}, "#graph", normal);
     }
 }

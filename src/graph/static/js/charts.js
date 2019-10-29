@@ -3,13 +3,14 @@ const unique = (value, index, self) => {
 }
 
 class ChartGeneric {
-    constructor(link, idDiv) {
+    constructor(link, idDiv, normal) {
         this.link = link;
         this.div = idDiv;
         this.series = null;
         this.labels = ['Ótimo', 'Bom', 'Regular', 'Ruim', 'Péssimo', 'Não sei'];
         this.table = null;
-        this.normal = false;
+        this.normal = normal;
+        this.total = false;
     }
 
     normalize(series) {
@@ -38,7 +39,7 @@ class ChartGeneric {
                 enabled: true,
                 formatter: function (val) {
                     // index.w.config.series[0].data[index.dataPointIndex] +  index.w.config.series[0].data[index.dataPointIndex]
-                    return normal ? `${val}%` : `${val}`;
+                    return `${val}`;
                 }
             },
             tooltip: {
@@ -86,9 +87,9 @@ class ChartGeneric {
 }
 
 class ChartBar extends ChartGeneric {
-    constructor(link, idDiv) {
-        super(link, idDiv);
-        // super.normal = true;
+    constructor(link, idDiv, normal) {
+        super(link, idDiv, normal);
+        super.total = true;
         this.getDataAPI(this.link)
             .then(data => {
                 this.rawData = data;
@@ -104,7 +105,11 @@ class ChartBar extends ChartGeneric {
         this.chart.render();
     }
 
-    updateChart(link) {
+    updateChart(link, normal) {
+        if(typeof normal !== 'undefined' && normal !== null){
+            this.normal = normal
+        }
+
         this.link = link;
         this.getDataAPI(this.link).then(data => {
             this.rawData = data;
@@ -115,6 +120,11 @@ class ChartBar extends ChartGeneric {
             this.chart.updateOptions({
                 xaxis: {
                     categories: this.roles
+                },
+                yaxis: {
+                    title: {
+                        text: this.normal ? "Porcentagem" : "Pessoas"
+                    }
                 }
             });
         });
@@ -151,6 +161,7 @@ class ChartBar extends ChartGeneric {
 
     sanitizeData(labels, data) {
         let series = {};
+        let total = {}
         labels.forEach(item => {
             series[item] = {name: item, data: new Array(this.roles.length).fill(0)}
         })
@@ -158,9 +169,21 @@ class ChartBar extends ChartGeneric {
             series[item.resposta].data[this.roles.lastIndexOf(item.segmento)] = item.count
         })
         let final = []
+        if (this.total && this.roles.length > 1) {
+            for (let [key, value] of Object.entries(series)) {
+                let sum = 0
+                for (let i = 0; i < value.data.length; i++) {
+                    sum += value.data[i]
+                }
+                series[key].data.push(sum)
+
+            }
+            this.roles.push('Total')
+        }
         for (let [key, value] of Object.entries(series)) {
             final.push(value)
         }
+
         if (this.normal) {
             final = this.normalize(final)
         }
