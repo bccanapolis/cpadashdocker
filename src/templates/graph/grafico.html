@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="header">
                     <select id="graficoChart" class="form-control select-title" name="grafico">
-                        <option value="0">Todos</option>
+                        <option value="0" selected>Participação de pessoas em 2019</option>
                     </select>
                     <p class="category"></p>
                 </div>
@@ -49,23 +49,40 @@
                             </div>
 
                         </div>
-                        <div class="form-group">
-                            <label class="switch">
-                                <input id="chart-visualization" type="checkbox" onchange="changeVis();" value="true">
-                                <span class="slider round"></span>
-                            </label>
-                            <span class="small text-muted" id="chart-vis-label">Dados Reais</span>
+                        <div class="row chart-options"  style="display: none">
+                            <div class="form-group col-md-2 col-sm-6 ">
+                                <label class="switch">
+                                    <input id="chart-visualization" type="checkbox" onchange="changeVis();"
+                                           value="true">
+                                    <span class="slider round slider-normal"></span>
+                                </label>
+                                <span class="small text-muted" id="chart-vis-label">Dados Reais</span>
+                            </div>
+                            <div class="form-group col-md-2 col-sm-6 ">
+                                <label class="switch">
+                                    <input id="chart-total" type="checkbox" onchange="changeTotal();" value="true">
+                                    <span class="slider round slider-total"></span>
+                                </label>
+                                <span class="small text-muted" id="chart-total-label">Sem Total</span>
+                            </div>
                         </div>
+
                     </form>
+                    <div style="display: none" class="chart-options">
+                        <p class="lead small text-uppercase">Indicador</p>
+                        <h3 id="chart-indicator" class="lead"></h3>
+                    </div>
+                    <hr>
                     <div id="chart-place">
 
                         <div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>
                     </div>
-
                     <hr>
-                    <table id="tableChart" class="table table-hover table-striped">
 
-                    </table>
+                    <div class="scrolled-table chart-options" style="display: none">
+                        <table id="tableChart" class="table table-hover table-striped">
+                        </table>
+                    </div>
                     <hr>
                     <div class="footer">
                         <div class="stats">
@@ -78,10 +95,19 @@
     </div>
     <script>
         var filterChart = null;
+        var normalize = false;
+        var totalize = false;
 
         function changeVis($event) {
-            filterChart.updateChart($('#chart-visualization').prop('checked'))
-            $('#chart-visualization').prop('checked') ? $("#chart-vis-label").text("Dados Relativos") :  $("#chart-vis-label").text("Dados Reais")
+            normalize = $('#chart-visualization').prop('checked');
+            filterChart.updateChart(normalize, null)
+            normalize ? $("#chart-vis-label").text("Dados Relativos") : $("#chart-vis-label").text("Dados Reais")
+        }
+
+        function changeTotal($event) {
+            totalize = $('#chart-total').prop('checked')
+            filterChart.updateChart(null, totalize)
+            totalize ? $("#chart-total-label").text("Com Total") : $("#chart-total-label").text("Sem Total")
         }
 
         window.onload = function () {
@@ -89,59 +115,66 @@
             filterChart = new FilterChart();
             $("#segmentoChart").on("change", () => {
                 filterChart.loadCampus();
-                filterChart.updateChart($('#chart-visualization').prop('checked'));
+                filterChart.updateChart(normalize, totalize);
                 let segmento = $("#segmentoChart option:selected").text()
-                if (segmento === 'Todos') {
-                    $("#cursoList").hide()
-                    $("#atuacaoList").hide()
-                    $("#lotacaoList").hide()
-                    $("#cursoChart").val(0)
-                    $("#atuacaoChart").val(0)
-                    $("#lotacaoChart").val(0)
-                } else if (segmento === 'Estudante') {
-                    $("#cursoList").show()
-                    $("#atuacaoList").hide()
-                    $("#lotacaoList").hide()
-                    $("#atuacaoChart").val(0)
-                    $("#lotacaoChart").val(0)
-                } else if (segmento === 'Docente') {
-                    $("#cursoList").hide()
-                    $("#atuacaoList").show()
-                    $("#lotacaoList").hide()
-                    $("#cursoChart").val(0)
-                    $("#lotacaoChart").val(0)
-                } else if (segmento === 'Técnico Administrativo Câmpus') {
-                    $("#cursoList").hide()
-                    $("#atuacaoList").hide()
-                    $("#lotacaoList").show()
-                    $("#cursoChart").val(0)
-                    $("#atuacaoChart").val(0)
-                } else if (segmento === 'Técnico Administrativo Reitoria') {
-                    $("#cursoList").hide()
-                    $("#atuacaoList").hide()
-                    $("#lotacaoList").show()
-                    $("#cursoChart").val(0)
-                    $("#atuacaoChart").val(0)
+                if ($("#graficoChart option:selected").val() != '0') {
+                    if (segmento === 'Todos') {
+                        $("#cursoList").hide()
+                        $("#atuacaoList").hide()
+                        $("#lotacaoList").hide()
+                        $("#cursoChart").val(0)
+                        $("#atuacaoChart").val(0)
+                        $("#lotacaoChart").val(0)
+                    } else if (segmento === 'Estudante') {
+                        $("#cursoList").show()
+                        $("#atuacaoList").hide()
+                        $("#lotacaoList").hide()
+                        $("#atuacaoChart").val(0)
+                        $("#lotacaoChart").val(0)
+                    } else if (segmento === 'Docente') {
+                        $("#cursoList").hide()
+                        $("#atuacaoList").show()
+                        $("#lotacaoList").hide()
+                        $("#cursoChart").val(0)
+                        $("#lotacaoChart").val(0)
+                    } else if (segmento === 'Técnico Administrativo Câmpus') {
+                        $("#cursoList").hide()
+                        $("#atuacaoList").hide()
+                        $("#lotacaoList").show()
+                        $("#cursoChart").val(0)
+                        $("#atuacaoChart").val(0)
+                    } else if (segmento === 'Técnico Administrativo Reitoria') {
+                        $("#cursoList").hide()
+                        $("#atuacaoList").hide()
+                        $("#lotacaoList").show()
+                        $("#cursoChart").val(0)
+                        $("#atuacaoChart").val(0)
+                    }
                 }
             })
             $("#atuacaoChart").on("change", () => {
-                filterChart.updateChart($('#chart-visualization').prop('checked'));
+                filterChart.updateChart(normalize, totalize);
             })
             $("#lotacaoChart").on("change", () => {
-                filterChart.updateChart($('#chart-visualization').prop('checked'));
+                filterChart.updateChart(normalize, totalize);
             })
             $("#graficoChart").on("change", () => {
+                if($("#graficoChart option:selected").val() == '0'){
+                    $(".chart-options").css('display', 'none')
+                }else{
+                    $(".chart-options").css('display', 'block')
+                }
                 filterChart.loadSegmentos();
-                filterChart.recreateChart($('#chart-visualization').prop('checked'));
+                filterChart.recreateChart(normalize, totalize);
             })
             $("#campusChart").on("change", () => {
                 filterChart.loadCursos();
                 filterChart.loadLotacao();
                 filterChart.loadAtuacao();
-                filterChart.updateChart($('#chart-visualization').prop('checked'));
+                filterChart.updateChart(normalize, totalize);
             })
             $("#cursoChart").on("change", () => {
-                filterChart.updateChart($('#chart-visualization').prop('checked'));
+                filterChart.updateChart(normalize, totalize);
             })
 
         }

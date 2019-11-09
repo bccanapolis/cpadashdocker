@@ -57,6 +57,10 @@ body,
     transition: .4s;
 }
 
+.slider-total {
+    background-color: #feb019;
+}
+
 .slider:before {
     position: absolute;
     content: "";
@@ -77,6 +81,14 @@ input:focus + .slider {
     box-shadow: 0 0 1px #FF4560;
 }
 
+input:checked + .slider-total {
+    background-color: #00e396;
+}
+
+input:focus + .slider-total {
+    box-shadow: 0 0 1px #00e396;
+}
+
 input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
@@ -90,4 +102,27 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+#tableChart {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#tableChart thead th {
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+.scrolled-table {
+    overflow-y: auto;
+    max-height: 320px;
+}
+
+#chart-indicator{
+    text-align: center;
+    line-height: 3em;
+    border-radius: 5px;
+    color: #fff;
 }

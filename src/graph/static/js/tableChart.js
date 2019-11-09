@@ -1,7 +1,7 @@
 class TableChart {
-  constructor(view, data, roles) {
+  constructor(pergunta, data, roles) {
     this.data = data;
-    this.view = view;
+    this.view = pergunta;
     this.roles = roles;
     this.div = $("#tableChart");
     this.table = null;
@@ -12,19 +12,15 @@ class TableChart {
     this.div.empty();
   }
   instanciateTable() {
-    switch (this.view) {
-      case 1:
-        this.table = new TableChartRoles(this.data);
-        break;
-      default:
-        this.table = new TableChartGen(this.data, this.roles)
-        break;
-    }
+    this.table = new TableChartGen(this.data, this.roles)
   }
-  static createTable(labels, data) {
+  static createTable(labels, data, indicator) {
     let thead = $("<thead></thead>");
+    console.log(indicator)
+    thead.attr('data-indicator', indicator);
+    let trhead = $("<tr></tr>");
     labels.forEach(item => {
-      thead.append($("<th></th>").text(item));
+      trhead.append($("<th></th>").text(item));
     })
     let tbody = $("<tbody></tbody>");
     data.forEach(item => {
@@ -34,7 +30,8 @@ class TableChart {
       }
       tbody.append(row);
     })
-    $("#tableChart").append(thead).append(tbody);
+    $("#tableChart").append(thead.append(trhead)).append(tbody);
+
   }
 }
 class TableChartRoles {
@@ -56,7 +53,7 @@ class TableChartRoles {
       total += item.count;
     })
     this.rawData.forEach(item => {
-      this.data.push({ campus: item.curso, total: item.count, porcentagem: Math.round(item.count * 100 / total) + "%" })
+      this.data.push({ campus: item.curso, total: item.count, porcentagem: Math.round((item.count * 100 / total)*10)/10 + "%" })
     })
   }
   sanitizeDataCampus() {
@@ -76,8 +73,9 @@ class TableChartGen {
     this.roles = roles;
     this.labels = ['Segmento', 'Resposta', 'Total', 'Porcentagem'];
     this.data = new Array();
+    this.indicador = 0;
     this.sanitizeData();
-    TableChart.createTable(this.labels, this.data);
+    TableChart.createTable(this.labels, this.data, this.indicador);
   }
   sanitizeData() {
     let ans = {}
@@ -88,8 +86,11 @@ class TableChartGen {
         ans[item.segmento] += item.count;
       }
     })
+
     this.rawData.forEach(item => {
-      this.data.push({ segmento: item.segmento, resposta: item.resposta, total: item.count, porcentagem: Math.round(item.count * 100 / ans[item.segmento]) + "%" })
+      this.data.push({ segmento: item.segmento, resposta: item.resposta, total: item.count, porcentagem: Math.round((item.count * 100 / ans[item.segmento])*10)/10 + "%" })
     })
+    this.data.sort((a,b) => (a.segmento > b.segmento) ? 1 : ((b.segmento > a.segmento) ? -1 : 0));
+
   }
 }

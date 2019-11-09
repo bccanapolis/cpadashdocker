@@ -23,6 +23,11 @@ class FilterChart {
     appendGraficos() {
         let grafico = $("#graficoChart");
         grafico.empty();
+        grafico.append(
+            $("<option></option>")
+                .attr({value: 0, selected: true})
+                .text(`Participação de pessoas em 2019`)
+        );
         this.graficos.forEach(item => {
             grafico.append(
                 $("<option></option>")
@@ -173,7 +178,7 @@ class FilterChart {
 
     loadCursos() {
         if ($("#campusChart").val() !== '0') {
-             let reqSegmento = $("#segmentoChart").val() !== '0' ? `&segmento=${$("#segmentoChart").val()}` : ''
+            let reqSegmento = $("#segmentoChart").val() !== '0' ? `&segmento=${$("#segmentoChart").val()}` : ''
             $("#cursoChart").val(0);
             $.get(`/api/curso?campus=${$("#campusChart").val()}&pergunta=${$("#graficoChart").val()}${reqSegmento}`, result => {
                 this.cursos = result.cursos;
@@ -183,7 +188,7 @@ class FilterChart {
         }
     }
 
-    updateChart(normal) {
+    updateChart(normal, total) {
         let curso = parseInt($("#cursoChart").val());
         let campus = parseInt($("#campusChart").val());
         let pergunta = parseInt($("#graficoChart").val());
@@ -191,15 +196,20 @@ class FilterChart {
         let lotacao = parseInt($("#lotacaoChart").val());
         let segmento = parseInt($("#segmentoChart").val());
         this.isCampusTodos();
-        this.chart.updateChart({pergunta, curso, campus, atuacao, lotacao, segmento}, normal);
+        this.chart.updateChart({pergunta, curso, campus, atuacao, lotacao, segmento}, normal, total);
     }
 
-    recreateChart(normal) {
+    recreateChart(normal, total) {
         $("#chart-place")
             .empty()
             .append(
                 $('<div id="graph" class="ct-chart tc-chart ct-perfect-fourth"></div>')
             );
-        this.chart = new ChartBar({pergunta: parseInt($("#graficoChart").val())}, "#graph", normal);
+        if ($("#graficoChart option:selected").val() == 0) {
+            this.chart = new ChartPie({pergunta: parseInt($("#graficoChart").val())}, "#graph", normal, total);
+        } else {
+            this.chart = new ChartBar({pergunta: parseInt($("#graficoChart").val())}, "#graph", normal, total);
+        }
+
     }
 }

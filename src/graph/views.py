@@ -49,6 +49,9 @@ def answer(request):
         ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'],
                                                  segmento=segmento, curso=form['curso'], campus=form['campus'],
                                                  perguntas=form)
+        # with connection.cursor() as cursor:
+        #     cursor.execute('refresh materialized view informacoes')
+        #     cursor.close()
         return HttpResponseRedirect("/?obrigado=true")
 
 
@@ -129,7 +132,18 @@ def apicampus(request):
     pergunta = request.GET.get("pergunta")
     segmento = request.GET.get("segmento", None)
     campus = []
-    if segmento is None:
+    if int(pergunta) == 0 and segmento is None:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'select distinct campus, campus_id from informacoes order by campus;')
+            campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
+    elif int(pergunta) == 0:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'select distinct campus, campus_id from informacoes where segmento_id = {} order by campus;'.format(
+                    int(segmento)))
+            campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
+    elif segmento is None:
         with connection.cursor() as cursor:
             cursor.execute(
                 'select distinct campus, campus_id from informacoes where pergunta_id = {} order by campus;'.format(
@@ -163,11 +177,12 @@ def apigrafico(request):
         return HttpResponseRedirect('/QthDtt4r')
     elif pergunta is None:
         with connection.cursor() as cursor:
-            cursor.execute('select distinct pergunta_id, pergunta from informacoes where pergunta not like \'Caso%\' ')
+            cursor.execute(
+                'select distinct pergunta_id, pergunta from informacoes where pergunta not like \'Caso%\' order by pergunta')
             data = [{'id': row[0], 'titulo': row[1]} for row in cursor.fetchall()]
 
         return JsonResponse({'dados': data})
-    else:
+    elif pergunta is not "0":
         sql = 'select count(pessoa), segmento, resposta, resposta_id from informacoes where '
         sql += 'pergunta_id = {} '.format(int(pergunta))
         if segmento is not None:
@@ -182,17 +197,79 @@ def apigrafico(request):
             sql += ' and lotacao = {} '.format(int(lotacao))
 
         sql += ' group by segmento, resposta, resposta_id order by resposta_id'
-
+        total = 0
+        indicador = 0
         with connection.cursor() as cursor:
             cursor.execute(sql)
             graficos = cursor.fetchall()
             data = [{'count': row[0], 'segmento': row[1], 'resposta': row[2]} for row in graficos]
             for row in graficos:
+                total += row[0]
                 if row[1] not in segmentos:
                     segmentos.append(row[1])
                 if row[2] not in respostas:
                     respostas.append(row[2])
-        return JsonResponse({'segmentos': segmentos, 'respostas': respostas, 'data': data})
+                if row[2] == 'Ótimo' or row[2] == 'Bom':
+                    indicador += row[0]
+            total = round((indicador * 100 / total) * 10) / 10
+        if total > 75:
+            indicador = {'label': 'Manter', 'valor': total, 'cor': '#008ffb'}
+        elif total > 50:
+            indicador = {'label': 'Desenvolver', 'valor': total, 'cor': '#00e396'}
+        elif total > 25:
+            indicador = {'label': 'Melhorar', 'valor': total, 'cor': '#feb019'}
+        else:
+            indicador = {'label': 'Sanar', 'valor': total, 'cor': '#ff4560'}
+        pergunta = Pergunta.objects.get(pk=pergunta).titulo
+        return JsonResponse(
+            {'pergunta': pergunta, 'indicador': indicador, 'roles': segmentos, 'respostas': respostas,
+             'data': data})
+    else:
+        sql = 'select count(distinct pessoa), campus'
+        fetch = ''
+        group = ' group by campus'
+        where = ''
+
+        if campus is not None and segmento is not None:
+            nome_segmento = Segmento.objects.get(pk=segmento).nome
+            fetch = ', segmento'
+            group += ', segmento'
+            where += ' where segmento_id = {} and campus_id = {} '.format(int(segmento), int(campus))
+            print(nome_segmento)
+            if nome_segmento == "Docente":
+                fetch += ', atuacao '
+                group += ', atuacao '
+            elif nome_segmento == "Estudante":
+                fetch += ', curso '
+                group += ', curso '
+            elif nome_segmento == 'Técnico Administrativo Campus' or nome_segmento == 'Técnico Administrativo Reitoria':
+                fetch += ', lotacao '
+                group += ', lotacao '
+        elif segmento is not None:
+            fetch = ', segmento'
+            group += ', segmento'
+            where += ' where segmento_id = {}'.format(int(segmento))
+        elif campus is not None:
+            fetch = ', segmento'
+            group += ', segmento'
+            where += ' where campus_id = {}'.format(int(campus))
+
+        sql = sql + fetch + ' from informacoes ' + where + group
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            graficos = cursor.fetchall()
+        for row in graficos:
+            if campus is not None and segmento is not None:
+                data.append({'count': row[0], 'label': row[3]})
+                segmentos.append(row[3])
+            elif campus is not None:
+                data.append({'count': row[0], 'label': row[2]})
+                segmentos.append(row[2])
+            else:
+                data.append({'count': row[0], 'label': row[1]})
+                segmentos.append(row[1])
+
+        return JsonResponse({'roles': segmentos, 'data': data})
 
 
 def apisegmento(request):

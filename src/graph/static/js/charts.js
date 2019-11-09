@@ -3,14 +3,14 @@ const unique = (value, index, self) => {
 }
 
 class ChartGeneric {
-    constructor(link, idDiv, normal) {
+    constructor(link, idDiv, normal = false, total = false) {
         this.link = link;
         this.div = idDiv;
         this.series = null;
-        this.labels = ['Ótimo', 'Bom', 'Regular', 'Ruim', 'Péssimo', 'Não sei'];
+        this.labels = null;
         this.table = null;
         this.normal = normal;
-        this.total = false;
+        this.total = total;
     }
 
     normalize(series) {
@@ -29,6 +29,7 @@ class ChartGeneric {
     defaultOptions(colors = ['#008ffb', '#00e396', '#feb019', '#ff4560', '#775dd0', '#2e294e']) {
         let normal = this.normal
         return {
+
             legend: {
                 position: 'bottom',
                 offsetY: -10
@@ -72,6 +73,12 @@ class ChartGeneric {
         };
     }
 
+    setIndicator(indicador) {
+        this.indicator = indicador;
+        let indicatorP = $("#chart-indicator").text(`${this.indicator.label} - ${this.indicator.valor}%`)
+        indicatorP.css('background-color', this.indicator.cor)
+    }
+
     getDataAPI(info) {
         let reqCampus = typeof info.campus != 'undefined' && info.campus != null && info.campus !== 0 ? `&campus=${info.campus}` : ''
         let reqCurso = typeof info.curso != 'undefined' && info.curso != null && info.curso !== 0 ? `&curso=${info.curso}` : ''
@@ -80,9 +87,12 @@ class ChartGeneric {
         let reqSegmento = typeof info.segmento != 'undefined' && info.segmento != null && info.segmento !== 0 ? `&segmento=${info.segmento}` : ''
         // console.table(info)
         return new Promise((resolve, reject) => {
-            $.get(`/api/grafico?pergunta=${info.pergunta}${reqSegmento}${reqAtuacao}${reqLotacao}${reqCampus}${reqCurso}`, result => {
-                // this.table = new TableChart(info.view, result.data, this.roles);
-                this.roles = result.segmentos;
+            $.get(`api/grafico?pergunta=${info.pergunta}${reqSegmento}${reqAtuacao}${reqLotacao}${reqCampus}${reqCurso}`, result => {
+                if (info.pergunta != 0) {
+                    this.setIndicator(result.indicador)
+                    this.table = new TableChart(info.pergunta, result.data, this.roles);
+                }
+                this.roles = result.roles;
                 // this.labels = result.respostas;
                 resolve(result.data);
             });
@@ -91,13 +101,14 @@ class ChartGeneric {
 }
 
 class ChartBar extends ChartGeneric {
-    constructor(link, idDiv, normal) {
-        super(link, idDiv, normal);
-        super.total = true;
+    constructor(link, idDiv, normal, total) {
+        super(link, idDiv, normal, total);
+        super.labels = ['Ótimo', 'Bom', 'Regular', 'Ruim', 'Péssimo', 'Não sei'];
         this.getDataAPI(this.link)
             .then(data => {
                 this.rawData = data;
                 super.series = this.sanitizeData(this.labels, this.rawData);
+
                 this.chartInit();
             })
             .then(() => {
@@ -109,11 +120,13 @@ class ChartBar extends ChartGeneric {
         this.chart.render();
     }
 
-    updateChart(link, normal) {
-        if(typeof normal !== 'undefined' && normal !== null){
+    updateChart(link, normal, total) {
+        if (typeof normal !== 'undefined' && normal !== null) {
             this.normal = normal
         }
-
+        if (typeof total !== 'undefined' && total !== null) {
+            this.total = total
+        }
         this.link = link;
         this.getDataAPI(this.link).then(data => {
             this.rawData = data;
@@ -195,84 +208,91 @@ class ChartBar extends ChartGeneric {
     }
 }
 
-// class ChartPie extends ChartGeneric {
-//   constructor(link, idDiv, roles) {
-//     super(link, idDiv, roles);
-//     super.labels = ["Sim", "Não"];
-//     this.getDataAPI(this.link)
-//       .then(data => {
-//         this.rawData = data;
-//         super.series = this.sanitizeData(this.roles, this.rawData);
-//         this.chart = this.chartInit();
-//
-//       })
-//       .then(() => {
-//         this.chart.render();
-//       });
-//   }
-//   updateChart(link) {
-//     this.link = link;
-//     this.getDataAPI(this.link).then(data => {
-//       this.rawData = data;
-//       this.updateRoles();
-//       this.noTotal = false;
-//       this.series = this.sanitizeData(this.roles, this.rawData);
-//       this.chart.updateSeries(
-//         this.series, true
-//       );
-//     });
-//   }
-//   sanitizeData(roles, data) {
-//     let sim = new Array(roles.length);
-//     sim[roles.length] = 0;
-//     let nao = new Array(roles.length);
-//     nao[roles.length] = 0;
-//
-//     data.forEach(item => {
-//       let rindex = roles.lastIndexOf(item.segmento);
-//       if (rindex != -1) {
-//         if (item.resposta == "Sim") {
-//           sim[rindex] = item.count;
-//           sim[roles.length] += sim[rindex];
-//         } else {
-//           nao[rindex] = item.count;
-//           nao[roles.length] += nao[rindex];
-//         }
-//       }
-//     });
-//     let total = sim[roles.length] + nao[roles.length];
-//     sim[roles.length] = Math.round((sim[roles.length] * 100) / total);
-//     nao[roles.length] = Math.round((nao[roles.length] * 100) / total);
-//     return [sim[roles.length], nao[roles.length]];
-//   }
-//   chartInit() {
-//     return new ApexCharts(
-//       document.querySelector(this.div),
-//       Object.assign(super.defaultOptions(), {
-//         chart: {
-//           height: 400,
-//           type: "pie"
-//         },
-//         legend: {
-//           position: "right"
-//         },
-//         responsive: [
-//           {
-//             breakpoint: 600,
-//             options: {
-//               chart: {
-//                 height: 480
-//               },
-//               legend: {
-//                 position: "bottom"
-//               }
-//             }
-//           }
-//         ]
-//       })
-//     );
-//   }
-// }
+class ChartPie extends ChartGeneric {
+    constructor(link, idDiv, normal, total) {
+        super(link, idDiv, normal, total);
+        this.getDataAPI(this.link)
+            .then(data => {
+                this.rawData = data;
+                super.series = this.sanitizeData(this.roles, this.rawData);
+                this.chartInit();
+            })
+            .then(() => {
+                this.render();
+            });
+    }
+
+    render() {
+        this.chart.render();
+    }
+
+    updateChart(link, normal, total) {
+        if (typeof normal !== 'undefined' && normal !== null) {
+            this.normal = normal
+        }
+        if (typeof total !== 'undefined' && total !== null) {
+            this.total = total
+        }
+        this.link = link;
+        this.getDataAPI(this.link).then(data => {
+            this.rawData = data;
+            this.chart.updateSeries(
+                this.sanitizeData(this.roles, this.rawData),
+                true
+            );
+            this.chart.updateOptions({
+                labels: this.roles
+            });
+        });
+    }
+
+    sanitizeData(labels, data) {
+        let final = new Array(labels.length).fill(0)
+        data.forEach(item => {
+            final[labels.lastIndexOf(item.label)] = item.count
+        })
+        return final
+    }
+
+    chartInit() {
+        this.chart = new ApexCharts(
+            document.querySelector(this.div),
+            Object.assign(super.defaultOptions([
+                "#F3B415",
+                "#F27036",
+                "#663F59",
+                "#6A6E94",
+                "#4E88B4",
+                "#00A7C6",
+                "#18D8D8",
+                "#A9D794",
+                "#46AF78",
+                "#A93F55",
+                "#8C5E58",
+                "#2176FF",
+                "#33A1FD",
+                "#7A918D",
+                "#BAFF29"
+            ]), {
+                chart: {
+                    height: 400,
+                    type: "pie"
+                },
+                legend: {
+                    position: "right"
+                },
+                labels: this.roles,
+                series: this.series,
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return Math.round(val*10)/10 + "%"
+                    },
+                }
+            })
+        );
+    }
+}
 
 // class ChartPieRoles extends ChartGeneric {
 //   constructor(link, idDiv, roles) {
@@ -348,23 +368,7 @@ class ChartBar extends ChartGeneric {
 //     this.chart = new ApexCharts(
 //       document.querySelector(this.div),
 //       Object.assign(
-//         super.defaultOptions([
-//           "#F3B415",
-//           "#F27036",
-//           "#663F59",
-//           "#6A6E94",
-//           "#4E88B4",
-//           "#00A7C6",
-//           "#18D8D8",
-//           "#A9D794",
-//           "#46AF78",
-//           "#A93F55",
-//           "#8C5E58",
-//           "#2176FF",
-//           "#33A1FD",
-//           "#7A918D",
-//           "#BAFF29"
-//         ]),
+//         super.defaultOptions(),
 //         {
 //           chart: {
 //             height: 400,
