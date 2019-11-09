@@ -258,21 +258,10 @@ class ChartPie extends ChartGeneric {
         this.chart = new ApexCharts(
             document.querySelector(this.div),
             Object.assign(super.defaultOptions([
-                "#F3B415",
-                "#F27036",
-                "#663F59",
-                "#6A6E94",
-                "#4E88B4",
-                "#00A7C6",
-                "#18D8D8",
-                "#A9D794",
-                "#46AF78",
-                "#A93F55",
-                "#8C5E58",
-                "#2176FF",
-                "#33A1FD",
-                "#7A918D",
-                "#BAFF29"
+                "#008ffb","#00e396","#feb019","#ff4560","#775dd0","#ff9800","#4caf50",
+                "#03a9f4","#3f51b5","#546e7a","#d4526e","#13d8aa","#a5978b","#fd6a6a",
+                "#546e7a","#4ecdc4","#449dd1","#f9a3a4","#fa4443","#662e9b", "#e2c044",
+                "#f86624","#5c4742","#8d5b4c","#a5978b","#5653fe","#c4bbaf","#2e294e"
             ]), {
                 chart: {
                     height: 400,
@@ -286,7 +275,7 @@ class ChartPie extends ChartGeneric {
                 dataLabels: {
                     enabled: true,
                     formatter: function (val) {
-                        return Math.round(val*10)/10 + "%"
+                        return Math.round(val * 10) / 10 + "%"
                     },
                 }
             })
