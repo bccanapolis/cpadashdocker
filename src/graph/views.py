@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.db.models import Count
 from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, Grafico, RespostaObjetiva, CursoCampus, \
-    Atuacao, Lotacao
+    Atuacao, Lotacao, Pessoa
 from django.db import connection
 import json
 from django.http import JsonResponse
@@ -56,7 +56,8 @@ def answer(request):
 
 
 def grafico(request):
-    return render(request, 'graph/grafico.html')
+    pessoas = Pessoa.objects.count()
+    return render(request, 'graph/grafico.html', {'total_votacao': pessoas})
 
 
 def apiatuacao(request):
