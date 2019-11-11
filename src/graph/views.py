@@ -277,9 +277,14 @@ def apisegmento(request):
     pergunta = request.GET.get('pergunta', None)
     segmentos = []
     if pergunta is not None:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                'select distinct segmento_id, segmento from informacoes where pergunta_id = {} order by segmento'.format(
-                    pergunta))
-            segmentos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
+        if int(pergunta) != 0:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    'select distinct segmento_id, segmento from informacoes where pergunta_id = {} order by segmento'.format(
+                        pergunta))
+                segmentos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
+        else:
+            with connection.cursor() as cursor:
+                cursor.execute('select distinct segmento_id, segmento from informacoes order by segmento')
+                segmentos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
     return JsonResponse({'segmentos': segmentos})

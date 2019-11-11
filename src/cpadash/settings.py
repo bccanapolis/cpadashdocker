@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -26,6 +25,11 @@ SECRET_KEY = 'i$c)5gglo=610)&n7&nq_0&%c&#q4ti7uh2z&sm31%q12q%7s*'
 DEBUG = True
 
 ALLOWED_HOSTS = ['web', 'cpa.localhost', 'localhost', '0.0.0.0', '127.0.0.1']
+CORS_ALLOW_METHODS = [
+    'GET'
+]
+CORS_ORIGIN_ALLOW_ALL = True  # ativando o cors para o DJANGO
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graph.apps.GraphConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'cpadash.urls'
