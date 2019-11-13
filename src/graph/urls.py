@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'api/atuacao', views.apiatuacao, name="atuacao"),
     path(r'api/lotacao', views.apilotacao, name="lotacao"),
     path(r'api/segmento', views.apisegmento, name="segmento"),
+    path(r'api/info', views.apiinfo, name="info"),
 ]

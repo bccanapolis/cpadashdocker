@@ -60,6 +60,10 @@ def grafico(request):
     return render(request, 'graph/grafico.html', {'total_votacao': pessoas})
 
 
+def apiinfo(request):
+    return JsonResponse({'pessoas': Pessoa.objects.count()})
+
+
 def apiatuacao(request):
     pergunta = request.GET.get('pergunta', None)
     campus = request.GET.get("campus", None)
@@ -195,11 +199,12 @@ def apigrafico(request):
         if atuacao is not None:
             sql += ' and atuacao_id = {} '.format(int(atuacao))
         if lotacao is not None:
-            sql += ' and lotacao = {} '.format(int(lotacao))
+            sql += ' and lotacao_id = {} '.format(int(lotacao))
 
         sql += ' group by segmento, resposta, resposta_id order by resposta_id'
         total = 0
         indicador = 0
+        print(sql)
         with connection.cursor() as cursor:
             cursor.execute(sql)
             graficos = cursor.fetchall()
@@ -243,7 +248,7 @@ def apigrafico(request):
             elif nome_segmento == "Estudante":
                 fetch += ', curso '
                 group += ', curso '
-            elif nome_segmento == 'Técnico Administrativo Campus' or nome_segmento == 'Técnico Administrativo Reitoria':
+            else:
                 fetch += ', lotacao '
                 group += ', lotacao '
         elif segmento is not None:
@@ -259,6 +264,7 @@ def apigrafico(request):
         with connection.cursor() as cursor:
             cursor.execute(sql)
             graficos = cursor.fetchall()
+            print(sql, graficos)
         for row in graficos:
             if campus is not None and segmento is not None:
                 data.append({'count': row[0], 'label': row[3]})

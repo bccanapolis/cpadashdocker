@@ -94,7 +94,7 @@
                                                             <input class="form-check-input respostas" type="radio"
                                                                    name="resposta-{{ pergunta.id }}"
                                                                    id="resposta-{{ pergunta.id }}-{{ resp.value }}"
-                                                                   value="{{ resp.id }}" required>
+                                                                   value="{{ resp.id }}" {% if resp.value == 0 %} required {% endif %}>
                                                             <label class="form-check-label lead"
                                                                    for="resposta-{{ pergunta.id }}-{{ resp.value }}">
                                                                 {{ resp.titulo }}
