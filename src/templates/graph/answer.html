@@ -16,16 +16,20 @@
                             elaboração do Relatório de Autoavaliação Institucional 2019, que será divulgado à comunidade
                             acadêmica e norteará às tomadas de decisões da gestão para melhorias no IFG. </p>
 
-                        <div class="title">Selecione os campos que se adequam a você:</div>
+
                     </div>
 
                     <div class="content">
 
-                        <div class="row">
+                        <div {% if route == "Técnico Administrativo Reitoria" %}style="display: none;" {% endif %} class="row">
+                        <div class="col-sm-12">
+                            <hr>
+                            <div class="title">Selecione os campos que se adequam a você:</div>
+                        </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Campus</label>
-                                    <select onload="selectCurso()" onchange="
+                                    <select  onload="selectCurso()" onchange="
                                             {% if route == "Estudante" %}
                                                 selectCurso(1)
                                             {% else %}
