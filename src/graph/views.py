@@ -15,6 +15,33 @@ def index(request):
     return render(request, "graph/index.html", {'obrigado': obrigado})
 
 
+def apianswer(request):
+    segmento = ''
+    skey = request.GET.get('skey')
+    if skey == "s4UkHMQC":
+        segmento = "Estudante"
+    elif skey == "zc3WsGum":
+        segmento = "Docente"
+    elif skey == "g3YTAfpT":
+        segmento = "Técnico Administrativo Câmpus"
+    elif skey == "4jn7qduk":
+        segmento = "Técnico Administrativo Reitoria"
+
+    if request.method == "GET":
+        campuses = [{'id': row['id'], 'nome': row['nome']} for row in Campus.objects.all().order_by('nome').values('id', 'nome')]
+
+        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'], 'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").order_by("tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
+
+        resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta in RespostaObjetiva.objects.all().order_by("-value").values('id', 'titulo', 'value')]
+
+        return JsonResponse({
+            "segmento": segmento,
+            "campus": campuses,
+            "perguntas": perguntas,
+            "resp_objetivas": resp_objetivas
+        })
+
+
 def answer(request):
     segmento = ''
     if request.path == "/s4UkHMQC":
