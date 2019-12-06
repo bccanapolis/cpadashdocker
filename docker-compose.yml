@@ -34,7 +34,7 @@ services:
   db2:
     image: postgres:alpine
     container_name: cpa_db
-    restart: unless-stopped
+    restart: always
     volumes:
       - postgres_cpa:/var/lib/postgresql/data
     environment:

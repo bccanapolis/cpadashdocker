@@ -12,7 +12,8 @@
                         <p>Prezado(a) participante, seja bem-vindo(a) ao QUESTIONÁRIO DE AUTOAVALIAÇÃO INSTITUCIONAL do
                             IFG. Este questionário é anônimo e visa a obter avaliações referentes às atividades
                             realizadas pelo IFG no ano de 2019. As questões abordam de forma concisa e objetiva os
-                            eixos: Desenvolvimento Institucional, Políticas de Gestão e Infraestrutura. A sua opinião subsidiará a
+                            eixos: Desenvolvimento Institucional, Políticas de Gestão e Infraestrutura. A sua opinião
+                            subsidiará a
                             elaboração do Relatório de Autoavaliação Institucional 2019, que será divulgado à comunidade
                             acadêmica e norteará às tomadas de decisões da gestão para melhorias no IFG. </p>
 
@@ -21,15 +22,16 @@
 
                     <div class="content">
 
-                        <div {% if route == "Técnico Administrativo Reitoria" %}style="display: none;" {% endif %} class="row">
-                        <div class="col-sm-12">
-                            <hr>
-                            <div class="title">Selecione os campos que se adequam a você:</div>
-                        </div>
+                        <div {% if route == "Técnico Administrativo Reitoria" %}style="display: none;" {% endif %}
+                             class="row">
+                            <div class="col-sm-12">
+                                <hr>
+                                <div class="title">Selecione os campos que se adequam a você:</div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Campus</label>
-                                    <select  onload="selectCurso()" onchange="
+                                    <select onload="selectCurso()" onchange="
                                             {% if route == "Estudante" %}
                                                 selectCurso(1)
                                             {% else %}
@@ -89,16 +91,15 @@
                                                 {% endif %}
                                             </p>
                                             {% if pergunta.tipo == 1 %}
-
                                                 <div class="row">
-
                                                     {% for resp in resp_objetivas %}
                                                         <div class="form-check col-xs-4 col-sm-2">
 
                                                             <input class="form-check-input respostas" type="radio"
                                                                    name="resposta-{{ pergunta.id }}"
                                                                    id="resposta-{{ pergunta.id }}-{{ resp.value }}"
-                                                                   value="{{ resp.id }}" {% if resp.value == 0 %} required {% endif %}>
+                                                                   value="{{ resp.id }}" {% if resp.value == 1 %}
+                                                                   required {% endif %}>
                                                             <label class="form-check-label lead"
                                                                    for="resposta-{{ pergunta.id }}-{{ resp.value }}">
                                                                 {{ resp.titulo }}
