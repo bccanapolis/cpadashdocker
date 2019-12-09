@@ -12,7 +12,7 @@ services:
     depends_on:
       - web
     environment:
-      VIRTUAL_HOST: cpa.bcc.anapolis.ifg.edu.br
+      VIRTUAL_HOST: api.cpa.bcc.anapolis.ifg.edu.br
       VIRTUAL_PORT: 8000
   web:
     build: .
