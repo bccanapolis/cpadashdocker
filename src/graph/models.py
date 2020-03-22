@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from django.db import models
 
 
 # Create your models here.
+from django.utils import timezone
 
 
 class Segmento(models.Model):
@@ -160,17 +163,26 @@ class ParticipacaoPergunta(models.Model):
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     res_subjetiva = models.TextField(null=True)
     res_objetiva = models.ForeignKey(RespostaObjetiva, null=True, on_delete=models.SET_NULL)
+    time = models.DateTimeField(timezone.now())
 
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
 
-    def create_participacao(naoaplica, atuacao, lotacao, segmento, curso, campus, perguntas):
+    def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas):
         pessoaId = None
-        if segmento == "Técnico Administrativo Câmpus" or segmento == "Técnico Administrativo Reitoria":
+        segmento = Segmento.objects.get(pk=int(segmento)).nome
+        if segmento == "Técnico Administrativo Câmpus":
+            pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
+                                             atuacao=None,
+                                             lotacao=Lotacao.objects.get(id=int(lotacao)),
+                                             curso=CursoCampus.objects.get(campus_id=int(campus),
+                                                                           curso__nome='Não Aplica')
+                                             )
+        elif segmento == "Técnico Administrativo Reitoria":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                   atuacao=None,
-                                  lotacao=Lotacao.objects.get(id=int(lotacao)),
-                                  curso=CursoCampus.objects.get(campus_id=campus,
+                                  lotacao=None,
+                                  curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                 curso__nome='Não Aplica')
                                   )
 
@@ -178,24 +190,23 @@ class ParticipacaoPergunta(models.Model):
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                   atuacao=Atuacao.objects.get(id=int(atuacao)),
                                   lotacao=None,
-                                  curso=CursoCampus.objects.get(campus_id=campus,
+                                  curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                 curso__nome='Não Aplica')
                                   )
-        else:
+        elif segmento == 'Estudante':
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
                                              lotacao=None,
-                                             curso=CursoCampus.objects.get(campus_id=campus,
-                                                                           curso_id=curso)
+                                             curso=CursoCampus.objects.get(campus_id=int(campus),
+                                                                           curso_id=int(curso))
                                              )
-        for key, value in perguntas.dict().items():
-            if key.startswith('resposta-') and value != "":
-                perguntaKey = int(key.replace("resposta-", ""))
-                pergunta = Pergunta.objects.get(pk=perguntaKey)
+        print(type(perguntas))
+        for key, value in perguntas.items():
+                pergunta = Pergunta.objects.get(pk=key)
 
                 if pergunta.tipo == 1:
-                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=perguntaKey),
-                                                        res_objetiva=RespostaObjetiva.objects.get(pk=value))
+                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
+                                                        res_objetiva=RespostaObjetiva.objects.get(pk=value), time=timezone.now())
                 else:
-                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=perguntaKey),
-                                                        res_subjetiva=value)
+                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
+                                                        res_subjetiva=value, time=timezone.now())

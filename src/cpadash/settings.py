@@ -26,7 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['web', 'cpa.localhost', 'localhost', '0.0.0.0', '127.0.0.1']
 CORS_ALLOW_METHODS = [
-    'GET'
+    'GET', 'POST'
 ]
 CORS_ORIGIN_ALLOW_ALL = True  # ativando o cors para o DJANGO
 CORS_ALLOW_CREDENTIALS = True
