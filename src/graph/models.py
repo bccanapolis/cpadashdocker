@@ -120,7 +120,7 @@ class PerguntaSegmento(models.Model):
         verbose_name_plural = 'PerguntaSegmento'
 
     YEAR_CHOICES = []
-    for r in range(2019, datetime.now().year):
+    for r in range(2019, datetime.now().year + 1):
         YEAR_CHOICES.append((r,r))
 
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
