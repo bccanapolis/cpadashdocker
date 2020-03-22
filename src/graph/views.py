@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
@@ -33,7 +34,7 @@ def apianswer(request):
 
         perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
                       'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
-                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").order_by(
+                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(perguntasegmento__ano=datetime.now().year).order_by("dimensao").order_by(
                          "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
 
         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta

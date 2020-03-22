@@ -130,7 +130,7 @@ class PerguntaSegmento(models.Model):
     ano = models.IntegerField(default=datetime.now().year, choices=YEAR_CHOICES)
 
     def __str__(self):
-        return "{} -- {}".format(self.segmento, self.pergunta)
+        return "{} -- {} -- {}".format(self.ano, self.segmento, self.pergunta)
 
 
 class Grafico(models.Model):
