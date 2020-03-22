@@ -1,11 +1,9 @@
 from datetime import datetime
 
 from django.db import models
-
-
-# Create your models here.
 from django.utils import timezone
 
+#TODO Arrumar para escalar perguntas por ano: todos os será adicionado novas perguntas e/ou utilizadas as já no banco de dados, portanto é necessário adicionar uma data para cara pergunta/segmento
 
 class Segmento(models.Model):
     class Meta:
@@ -121,10 +119,15 @@ class PerguntaSegmento(models.Model):
     class Meta:
         verbose_name_plural = 'PerguntaSegmento'
 
+    YEAR_CHOICES = []
+    for r in range(2019, datetime.now().year):
+        YEAR_CHOICES.append((r,r))
+
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE)
     atuacao = models.ForeignKey(Atuacao, null=True, on_delete=models.SET_NULL)
     lotacao = models.ForeignKey(Lotacao, null=True, on_delete=models.SET_NULL)
+    ano = models.IntegerField(default=datetime.now().year, choices=YEAR_CHOICES)
 
     def __str__(self):
         return "{} -- {}".format(self.segmento, self.pergunta)
