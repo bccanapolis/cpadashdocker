@@ -1,4 +1,4 @@
-version: "3.5"
+version: "3.8"
 services:
   nginx:
     image: nginx:latest
@@ -13,7 +13,6 @@ services:
       - web
     environment:
       VIRTUAL_HOST: api.cpa.bcc.anapolis.ifg.edu.br
-      VIRTUAL_PORT: 8000
   web:
     build: .
     container_name: cpa_app
