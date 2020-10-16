@@ -22,6 +22,7 @@ select count(distinct pessoa), campus, segmento, lotacao  from informacoes  wher
 
 create materialized view informacoes as
 select pergunta.titulo as pergunta,
+        participacao.created_at  as ano
        pergunta.id     as pergunta_id,
        pessoa.id       as pessoa,
        segmento.nome   as segmento,

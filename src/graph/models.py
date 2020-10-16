@@ -166,7 +166,7 @@ class ParticipacaoPergunta(models.Model):
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     res_subjetiva = models.TextField(null=True)
     res_objetiva = models.ForeignKey(RespostaObjetiva, null=True, on_delete=models.SET_NULL)
-    time = models.DateTimeField(timezone.now())
+    ano = models.DateTimeField(auto_created=True, auto_now=True)
 
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
@@ -209,7 +209,7 @@ class ParticipacaoPergunta(models.Model):
 
                 if pergunta.tipo == 1:
                     ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
-                                                        res_objetiva=RespostaObjetiva.objects.get(pk=value), time=timezone.now())
+                                                        res_objetiva=RespostaObjetiva.objects.get(pk=value), ano=timezone.now())
                 else:
                     ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
-                                                        res_subjetiva=value, time=timezone.now())
+                                                        res_subjetiva=value, ano=timezone.now())

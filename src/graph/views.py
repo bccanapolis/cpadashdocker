@@ -34,7 +34,8 @@ def apianswer(request):
 
         perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
                       'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
-                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(perguntasegmento__ano=datetime.now().year).order_by("dimensao").order_by(
+                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
+                         perguntasegmento__ano=datetime.now().year).order_by("dimensao").order_by(
                          "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
 
         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta
@@ -102,9 +103,9 @@ def apiano(request):
     with connection.cursor() as cursor:
         cursor.execute('select distinct ano from informacoes order by ano desc')
         anos = [int(row[0]) for row in cursor.fetchall()]
-    return JsonResponse({
-        'ano': anos
-    })
+        return JsonResponse({
+            'ano': anos
+        })
 
 
 def apiatuacao(request):
@@ -200,18 +201,21 @@ def apicampus(request):
     elif int(pergunta) == 0 and ano is not None:
         with connection.cursor() as cursor:
             cursor.execute(
-                'select distinct campus, campus_id from informacoes where segmento_id = {} and ano = {} order by campus;'.format(int(segmento), int(ano)))
+                'select distinct campus, campus_id from informacoes where segmento_id = {} and ano = {} order by campus;'.format(
+                    int(segmento), int(ano)))
             campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
     elif segmento is None and ano is not None:
         with connection.cursor() as cursor:
             cursor.execute(
-                'select distinct campus, campus_id from informacoes where pergunta_id = {} and ano = {} order by campus;'.format(int(pergunta), int(ano)))
+                'select distinct campus, campus_id from informacoes where pergunta_id = {} and ano = {} order by campus;'.format(
+                    int(pergunta), int(ano)))
             campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
     # LISTAR TODOS OS CAMPUS DENTRO DE INFORMAÇÕES
     else:
         with connection.cursor() as cursor:
             cursor.execute(
-                'select distinct campus, campus_id from informacoes where pergunta_id = {} and segmento_id = {} and ano = {} order by campus;'.format(int(pergunta), int(segmento), int(ano)))
+                'select distinct campus, campus_id from informacoes where pergunta_id = {} and segmento_id = {} and ano = {} order by campus;'.format(
+                    int(pergunta), int(segmento), int(ano)))
             campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
 
     return JsonResponse({'campus': campus})
@@ -261,7 +265,7 @@ def apigrafico(request):
         sql += ' group by segmento, resposta, resposta_id order by resposta_id'
         total = 0
         indicador = 0
-        #print(sql)
+        # print(sql)
         with connection.cursor() as cursor:
             cursor.execute(sql)
             graficos = cursor.fetchall()
@@ -298,7 +302,7 @@ def apigrafico(request):
             fetch = ', segmento'
             group += ', segmento'
             where += ' and segmento_id = {} and campus_id = {} '.format(int(segmento), int(campus))
-            #print(nome_segmento)
+            # print(nome_segmento)
             if nome_segmento == "Docente":
                 fetch += ', atuacao '
                 group += ', atuacao '
@@ -321,7 +325,7 @@ def apigrafico(request):
         with connection.cursor() as cursor:
             cursor.execute(sql)
             graficos = cursor.fetchall()
-            #print(sql, graficos)
+            # print(sql, graficos)
         for row in graficos:
             if campus is not None and segmento is not None:
                 data.append({'count': row[0], 'label': row[3]})
