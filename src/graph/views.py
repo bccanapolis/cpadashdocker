@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, Grafico, RespostaObjetiva, CursoCampus, \
-    Atuacao, Lotacao, Pessoa
+    Atuacao, Lotacao, Pessoa, PerguntaSegmento
 from django.db import connection
 import json
 from django.http import JsonResponse
@@ -32,11 +32,15 @@ def apianswer(request):
     if request.method == "GET":
         # campuses = [{'id': row['id'], 'nome': row['nome']} for row in Campus.objects.all().order_by('nome').values('id', 'nome')]
 
-        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
-                      'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
-                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
-                         perguntasegmento__ano=datetime.now().year).order_by("dimensao").order_by(
-                         "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
+        ultimo_ano = PerguntaSegmento.objects.order_by('-ano').values('ano').first()['ano']
+
+        perguntas = [
+            {'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
+             'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
+            Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
+                perguntasegmento__ano=ultimo_ano).order_by("dimensao").order_by(
+                "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo',
+                               'perguntasegmento__ano').distinct()]
 
         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta
                           in RespostaObjetiva.objects.all().order_by("-value").values('id', 'titulo', 'value')]
@@ -46,6 +50,7 @@ def apianswer(request):
         return JsonResponse({
             "segmento": {'id': segmento.id, 'nome': segmento.nome},
             # "campus": campuses,
+            "ano": ultimo_ano,
             "perguntas": perguntas,
             "resp_objetivas": resp_objetivas
         })
@@ -54,7 +59,7 @@ def apianswer(request):
         body = json.loads(body_unicode)
         ParticipacaoPergunta.create_participacao(atuacao=body['atuacao'], lotacao=body['lotacao'],
                                                  segmento=body['segmento'], curso=body['curso'], campus=body['campus'],
-                                                 perguntas=body['respostas'])
+                                                 perguntas=body['respostas'], ano=body['ano'])
         return JsonResponse({
             "content": 0,
         })

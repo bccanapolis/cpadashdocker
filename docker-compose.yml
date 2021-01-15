@@ -47,8 +47,8 @@ volumes:
   postgres_cpa:
     external: true
 
-networks:
-  default:
-    external:
-      name: nginx-proxy
+#networks:
+#  default:
+#    external:
+#      name: nginx-proxy
       

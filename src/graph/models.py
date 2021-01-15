@@ -3,7 +3,8 @@ from datetime import datetime
 from django.db import models
 from django.utils import timezone
 
-#TODO Arrumar para escalar perguntas por ano: todos os será adicionado novas perguntas e/ou utilizadas as já no banco de dados, portanto é necessário adicionar uma data para cara pergunta/segmento
+
+# TODO Arrumar para escalar perguntas por ano: todos os será adicionado novas perguntas e/ou utilizadas as já no banco de dados, portanto é necessário adicionar uma data para cara pergunta/segmento
 
 class Segmento(models.Model):
     class Meta:
@@ -27,7 +28,7 @@ class Atuacao(models.Model):
 
 class Lotacao(models.Model):
     class Meta:
-        verbose_name_plural = 'Lotacoes'
+        verbose_name_plural = 'Lotacao'
 
     titulo = models.CharField(max_length=100)
 
@@ -99,7 +100,7 @@ class Pessoa(models.Model):
     curso = models.ForeignKey(CursoCampus, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return self.nome
+        return f'{self.segmento} -- {self.atuacao} -- {self.lotacao} -- {self.curso}'
 
 
 class Pergunta(models.Model):
@@ -108,7 +109,6 @@ class Pergunta(models.Model):
 
     titulo = models.TextField()
     tipo = models.IntegerField(null=False, default=1)
-
     dimensao = models.ForeignKey(Dimensao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
@@ -121,7 +121,7 @@ class PerguntaSegmento(models.Model):
 
     YEAR_CHOICES = []
     for r in range(2019, datetime.now().year + 1):
-        YEAR_CHOICES.append((r,r))
+        YEAR_CHOICES.append((r, r))
 
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE)
@@ -166,12 +166,12 @@ class ParticipacaoPergunta(models.Model):
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     res_subjetiva = models.TextField(null=True)
     res_objetiva = models.ForeignKey(RespostaObjetiva, null=True, on_delete=models.SET_NULL)
-    ano = models.DateTimeField(auto_created=True, auto_now=True)
+    ano = models.IntegerField(null=True, default=datetime.now().year)
 
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
 
-    def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas):
+    def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas, ano):
         pessoaId = None
         segmento = Segmento.objects.get(pk=int(segmento)).nome
         if segmento == "Técnico Administrativo Câmpus":
@@ -183,19 +183,19 @@ class ParticipacaoPergunta(models.Model):
                                              )
         elif segmento == "Técnico Administrativo Reitoria":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
-                                  atuacao=None,
-                                  lotacao=None,
-                                  curso=CursoCampus.objects.get(campus_id=int(campus),
-                                                                curso__nome='Não Aplica')
-                                  )
+                                             atuacao=None,
+                                             lotacao=None,
+                                             curso=CursoCampus.objects.get(campus_id=int(campus),
+                                                                           curso__nome='Não Aplica')
+                                             )
 
         elif segmento == "Docente":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
-                                  atuacao=Atuacao.objects.get(id=int(atuacao)),
-                                  lotacao=None,
-                                  curso=CursoCampus.objects.get(campus_id=int(campus),
-                                                                curso__nome='Não Aplica')
-                                  )
+                                             atuacao=Atuacao.objects.get(id=int(atuacao)),
+                                             lotacao=None,
+                                             curso=CursoCampus.objects.get(campus_id=int(campus),
+                                                                           curso__nome='Não Aplica')
+                                             )
         elif segmento == 'Estudante':
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
@@ -203,13 +203,14 @@ class ParticipacaoPergunta(models.Model):
                                              curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                            curso_id=int(curso))
                                              )
-        print(type(perguntas))
-        for key, value in perguntas.items():
-                pergunta = Pergunta.objects.get(pk=key)
 
-                if pergunta.tipo == 1:
-                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
-                                                        res_objetiva=RespostaObjetiva.objects.get(pk=value), ano=timezone.now())
-                else:
-                    ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
-                                                        res_subjetiva=value, ano=timezone.now())
+        for key, value in perguntas.items():
+            pergunta = Pergunta.objects.get(pk=key)
+
+            if pergunta.tipo == 1:
+                ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
+                                                    res_objetiva=RespostaObjetiva.objects.get(pk=value),
+                                                    ano=ano)
+            else:
+                ParticipacaoPergunta.objects.create(pessoa=pessoaId, pergunta=Pergunta.objects.get(pk=key),
+                                                    res_subjetiva=value, ano=ano)
