@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pessoa, Curso, Campus, Eixo, Pergunta, Segmento, Grafico, Atuacao, Dimensao, ParticipacaoPergunta, \
+from .models import Pessoa, Curso, Campus, Eixo, Pergunta, Segmento, Atuacao, Dimensao, ParticipacaoPergunta, \
     CursoCampus, PerguntaSegmento, RespostaObjetiva, Lotacao
 
 # Register your models here.
@@ -10,7 +10,6 @@ admin.site.register(Eixo)
 admin.site.register(Pergunta)
 admin.site.register(Segmento)
 admin.site.register(Lotacao)
-admin.site.register(Grafico)
 admin.site.register(Atuacao)
 admin.site.register(Dimensao)
 admin.site.register(ParticipacaoPergunta)

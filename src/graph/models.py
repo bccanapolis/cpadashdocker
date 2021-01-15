@@ -108,6 +108,7 @@ class Pergunta(models.Model):
         verbose_name_plural = 'Pergunta'
 
     titulo = models.TextField()
+    # Refere se pergunta é objetiva 1 ou subjetiva 2
     tipo = models.IntegerField(null=False, default=1)
     dimensao = models.ForeignKey(Dimensao, null=True, on_delete=models.SET_NULL)
 
@@ -132,19 +133,19 @@ class PerguntaSegmento(models.Model):
     def __str__(self):
         return "{} -- {} -- {}".format(self.ano, self.segmento, self.pergunta)
 
-
-class Grafico(models.Model):
-    class Meta:
-        verbose_name_plural: "Grafico"
-
-    titulo = models.TextField()
-    numero = models.IntegerField(null=True)
-    pergunta = models.ForeignKey(
-        Pergunta, blank=True, null=True, on_delete=models.SET_NULL)
-    topico = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return self.titulo
+# Não utilizado
+# class Grafico(models.Model):
+#     class Meta:
+#         verbose_name_plural: "Grafico"
+#
+#     titulo = models.TextField()
+#     numero = models.IntegerField(null=True)
+#     pergunta = models.ForeignKey(
+#         Pergunta, blank=True, null=True, on_delete=models.SET_NULL)
+#     topico = models.CharField(max_length=100, blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.titulo
 
 
 class RespostaObjetiva(models.Model):

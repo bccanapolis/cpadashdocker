@@ -1,12 +1,8 @@
-import os
-from datetime import datetime
-
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
-from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
-from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, Grafico, RespostaObjetiva, CursoCampus, \
-    Atuacao, Lotacao, Pessoa, PerguntaSegmento
+from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, RespostaObjetiva, \
+    Atuacao, Lotacao, PerguntaSegmento
 from django.db import connection
 import json
 from django.http import JsonResponse
@@ -98,6 +94,7 @@ def answer(request):
         ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'],
                                                  segmento=segmento, curso=form['curso'], campus=form['campus'],
                                                  perguntas=form)
+        # Atualiza os gráficos
         # with connection.cursor() as cursor:
         #     cursor.execute('refresh materialized view informacoes')
         #     cursor.close()
