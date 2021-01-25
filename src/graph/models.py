@@ -70,7 +70,7 @@ class Dimensao(models.Model):
     class Meta:
         verbose_name_plural = 'Dimensao'
 
-    dimensao = models.CharField(max_length=100)
+    dimensao = models.TextField()
     eixo = models.ForeignKey(Eixo, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):

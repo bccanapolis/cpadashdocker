@@ -7,6 +7,8 @@ INSERT INTO public.graph_atuacao (id, titulo) VALUES (5, 'Ciências Biológicas'
 INSERT INTO public.graph_atuacao (id, titulo) VALUES (6, 'Engenharias');
 INSERT INTO public.graph_atuacao (id, titulo) VALUES (4, 'Ciências Exatas e da Terra');
 INSERT INTO public.graph_atuacao (id, titulo) VALUES (12, 'Outros');
+alter sequence public.graph_atuacao_id_seq restart with 13;
+
 
 INSERT INTO public.graph_campus (id, nome) VALUES (1, 'Águas Lindas');
 INSERT INTO public.graph_campus (id, nome) VALUES (2, 'Anápolis');
@@ -22,6 +24,7 @@ INSERT INTO public.graph_campus (id, nome) VALUES (11, 'Senador Canedo');
 INSERT INTO public.graph_campus (id, nome) VALUES (12, 'Uruaçu');
 INSERT INTO public.graph_campus (id, nome) VALUES (13, 'Valparaíso');
 INSERT INTO public.graph_campus (id, nome) VALUES (14, 'Formosa');
+alter sequence public.graph_campus_id_seq restart with 15;
 
 INSERT INTO public.graph_curso (id, nome) VALUES (1, 'Licenciatura em Ciências Biológicas');
 INSERT INTO public.graph_curso (id, nome) VALUES (2, 'Bacharelado em Ciência da Computação');
@@ -65,6 +68,7 @@ INSERT INTO public.graph_curso (id, nome) VALUES (39, 'Especialização em Docê
 INSERT INTO public.graph_curso (id, nome) VALUES (40, 'Bacharelado em Engenharia de Produção');
 INSERT INTO public.graph_curso (id, nome) VALUES (42, 'Não Aplica');
 INSERT INTO public.graph_curso (id, nome) VALUES (43, 'Bacharelado em Informática');
+alter sequence public.graph_curso_id_seq restart with 44;
 
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (3, 7, 43, null);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (4, 1, 1, null);
@@ -139,23 +143,26 @@ INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (73
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (74, 13, 42, 0);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (75, 14, 42, 0);
 INSERT INTO public.graph_cursocampus (id, campus_id, curso_id, quant) VALUES (76, 5, 36, 0);
+alter sequence public.graph_cursocampus_id_seq restart with 77;
 
 INSERT INTO public.graph_eixo (id, eixo) VALUES (1, 'Desenvolvimento Institucional');
 INSERT INTO public.graph_eixo (id, eixo) VALUES (2, 'Políticas de Gestão');
 INSERT INTO public.graph_eixo (id, eixo) VALUES (3, 'Infraestrutura');
 INSERT INTO public.graph_eixo (id, eixo) VALUES (4, 'Não Aplica');
+alter sequence public.graph_eixo_id_seq restart with 5;
 
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (1, 'Missão Institucional e PDI', 1);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (2, 'Responsabilidade Social', 1);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (3, 'Políticas de Pessoal', 2);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (4, 'Organização e Gestão da Instituição', 2);
 INSERT INTO public.graph_dimensao (id, dimensao, eixo_id) VALUES (5, 'Infraestrutura Física', 3);
-
+alter sequence public.graph_dimensao_id_seq restart with 6;
 
 
 INSERT INTO public.graph_lotacao (id, titulo) VALUES (1, 'Outros');
 INSERT INTO public.graph_lotacao (id, titulo) VALUES (2, 'Laboratório');
 INSERT INTO public.graph_lotacao (id, titulo) VALUES (3, 'Biblioteca');
+alter sequence public.graph_lotacao_id_seq restart with 4;
 
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (1, 'O seu conhecimento sobre a missão (função social) do IFG é:', 1, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (2, 'O seu conhecimento sobre o Plano de Desenvolvimento Institucional (PDI 2019- 2023) é:', 1, 1);
@@ -181,11 +188,13 @@ INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (24, 'A
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (25, 'As áreas de convivência para os servidores no IFG são:', 5, 1);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (27, 'Caso julgue necessário, deixe sua crítica ou sugestão para os aspectos avaliados.', null, 2);
 INSERT INTO public.graph_pergunta (id, titulo, dimensao_id, tipo) VALUES (28, 'O acervo da biblioteca, voltado para seu Curso é:', 1, 1);
+alter sequence public.graph_pergunta_id_seq restart with 29;
 
 INSERT INTO public.graph_segmento (id, nome) VALUES (7, 'Estudante');
 INSERT INTO public.graph_segmento (id, nome) VALUES (1, 'Docente');
 INSERT INTO public.graph_segmento (id, nome) VALUES (6, 'Técnico Administrativo Reitoria');
 INSERT INTO public.graph_segmento (id, nome) VALUES (4, 'Técnico Administrativo Câmpus');
+alter sequence public.graph_segmento_id_seq restart with 8;
 
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (24, 12, 4, 12, 2);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (23, 10, 4, 12, 3);
@@ -247,7 +256,7 @@ INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (53, 5, 1, 12, 1);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (52, 4, 1, 12, 1);
 INSERT INTO public.graph_perguntasegmento (id, pergunta_id, segmento_id, atuacao_id, lotacao_id) VALUES (54, 6, 1, 12, 1);
-
+alter sequence public.graph_perguntasegmento_id_seq restart with 100;
 
 INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (1, 'Ótimo', 5);
 INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (3, 'Regular', 3);
@@ -255,3 +264,4 @@ INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (4, 'Ruim',
 INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (5, 'Péssimo', 1);
 INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (6, 'Não sei', 0);
 INSERT INTO public.graph_respostaobjetiva (id, titulo, value) VALUES (2, 'Bom', 4);
+alter sequence public.graph_respostaobjetiva_id_seq restart with 7;
