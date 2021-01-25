@@ -34,7 +34,7 @@ def apianswer(request):
             {'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
              'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
             Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
-                perguntasegmento__ano=ultimo_ano).order_by("dimensao").order_by(
+                perguntasegmento__ano=ultimo_ano).order_by("dimensao__eixo").order_by("dimensao__eixo").order_by(
                 "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo',
                                'perguntasegmento__ano').distinct()]
 
@@ -61,44 +61,44 @@ def apianswer(request):
         })
 
 
-def answer(request):
-    segmento = ''
-    if request.path == "/s4UkHMQC":
-        segmento = "Estudante"
-    elif request.path == "/zc3WsGum":
-        segmento = "Docente"
-    elif request.path == "/g3YTAfpT":
-        segmento = "Servidores Técnicos"
-    # elif request.path == "/4jn7qduk":
-    #     segmento = "Técnico Administrativo Reitoria"
-
-    if request.method == "GET":
-        cursos = json.dumps(list(Curso.objects.all().order_by(
-            "nome").values('id', 'nome')))
-
-        tiposPessoa = Segmento.objects.all().order_by("-id").values('id', 'nome')
-        campuses = Campus.objects.all().order_by('nome').values('id', 'nome')
-        perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
-                      'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
-                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").order_by(
-                         "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
-        resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta
-                          in RespostaObjetiva.objects.all().order_by("-value").values('id', 'titulo', 'value')]
-        return render(request, "graph/answer.html", {
-            "route": segmento, "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas,
-            "resp_objetivas": resp_objetivas
-        })
-    elif request.method == "POST":
-        form = request.POST
-        naoaplica = request.POST.get("naoaplica")
-        ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'],
-                                                 segmento=segmento, curso=form['curso'], campus=form['campus'],
-                                                 perguntas=form)
-        # Atualiza os gráficos
-        # with connection.cursor() as cursor:
-        #     cursor.execute('refresh materialized view informacoes')
-        #     cursor.close()
-        return HttpResponseRedirect("/?obrigado=true")
+# def answer(request):
+#     segmento = ''
+#     if request.path == "/s4UkHMQC":
+#         segmento = "Estudante"
+#     elif request.path == "/zc3WsGum":
+#         segmento = "Docente"
+#     elif request.path == "/g3YTAfpT":
+#         segmento = "Servidores Técnicos"
+#     # elif request.path == "/4jn7qduk":
+#     #     segmento = "Técnico Administrativo Reitoria"
+#
+#     if request.method == "GET":
+#         cursos = json.dumps(list(Curso.objects.all().order_by(
+#             "nome").values('id', 'nome')))
+#
+#         tiposPessoa = Segmento.objects.all().order_by("-id").values('id', 'nome')
+#         campuses = Campus.objects.all().order_by('nome').values('id', 'nome')
+#         perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
+#                       'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
+#                      Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").order_by(
+#                          "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
+#         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta
+#                           in RespostaObjetiva.objects.all().order_by("-value").values('id', 'titulo', 'value')]
+#         return render(request, "graph/answer.html", {
+#             "route": segmento, "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas,
+#             "resp_objetivas": resp_objetivas
+#         })
+#     elif request.method == "POST":
+#         form = request.POST
+#         naoaplica = request.POST.get("naoaplica")
+#         ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'],
+#                                                  segmento=segmento, curso=form['curso'], campus=form['campus'],
+#                                                  perguntas=form)
+#         # Atualiza os gráficos
+#         # with connection.cursor() as cursor:
+#         #     cursor.execute('refresh materialized view informacoes')
+#         #     cursor.close()
+#         return HttpResponseRedirect("/?obrigado=true")
 
 
 def apiano(request):

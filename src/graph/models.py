@@ -173,7 +173,8 @@ class ParticipacaoPergunta(models.Model):
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
 
-    def create_participacao(self, atuacao, lotacao, segmento, curso, campus, perguntas, ano):
+    @staticmethod
+    def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas, ano):
         pessoaId = None
         segmento = Segmento.objects.get(pk=int(segmento)).nome
         if segmento == "Servidores Técnicos":
