@@ -21,7 +21,7 @@ def apianswer(request):
     elif skey == "zc3WsGum":
         segmento = "Docente"
     elif skey == "g3YTAfpT":
-        segmento = "Servidores Técnicos"
+        segmento = "Servidor Técnico"
     # elif request.path == "/4jn7qduk":
     #     segmento = "Técnico Administrativo Reitoria"
 

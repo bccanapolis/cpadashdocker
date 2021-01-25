@@ -177,7 +177,7 @@ class ParticipacaoPergunta(models.Model):
     def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas, ano):
         pessoaId = None
         segmento = Segmento.objects.get(pk=int(segmento)).nome
-        if segmento == "Servidores Técnicos":
+        if segmento == "Servidor Técnico":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
                                              lotacao=Lotacao.objects.get(id=int(lotacao)),
