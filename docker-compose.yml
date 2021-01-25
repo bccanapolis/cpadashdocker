@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 services:
   nginx:
     image: nginx:latest
@@ -47,8 +47,8 @@ volumes:
   postgres_cpa:
     external: true
 
-#networks:
-#  default:
-#    external:
-#      name: nginx-proxy
+networks:
+  default:
+    external:
+      name: postgres
       
