@@ -239,7 +239,7 @@ def apigrafico(request):
         with connection.cursor() as cursor:
             cursor.execute('refresh materialized view informacoes')
             cursor.close()
-        return HttpResponseRedirect('/QthDtt4r')
+        return HttpResponseRedirect('http://cpa.bcc.anapolis.ifg.edu.br/relatorio')
     elif pergunta is None and ano is not None:
         with connection.cursor() as cursor:
             cursor.execute(
