@@ -133,6 +133,7 @@ class PerguntaSegmento(models.Model):
     def __str__(self):
         return "{} -- {} -- {}".format(self.ano, self.segmento, self.pergunta)
 
+
 # Não utilizado
 # class Grafico(models.Model):
 #     class Meta:
@@ -172,23 +173,23 @@ class ParticipacaoPergunta(models.Model):
     def __str__(self):
         return "{} {}".format(self.pessoa, self.pergunta)
 
-    def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas, ano):
+    def create_participacao(self, atuacao, lotacao, segmento, curso, campus, perguntas, ano):
         pessoaId = None
         segmento = Segmento.objects.get(pk=int(segmento)).nome
-        if segmento == "Técnico Administrativo Câmpus":
+        if segmento == "Servidores Técnicos":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
                                              lotacao=Lotacao.objects.get(id=int(lotacao)),
                                              curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                            curso__nome='Não Aplica')
                                              )
-        elif segmento == "Técnico Administrativo Reitoria":
-            pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
-                                             atuacao=None,
-                                             lotacao=None,
-                                             curso=CursoCampus.objects.get(campus_id=int(campus),
-                                                                           curso__nome='Não Aplica')
-                                             )
+        # elif segmento == "Técnico Administrativo Reitoria":
+        #     pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
+        #                                      atuacao=None,
+        #                                      lotacao=None,
+        #                                      curso=CursoCampus.objects.get(campus_id=int(campus),
+        #                                                                    curso__nome='Não Aplica')
+        #                                      )
 
         elif segmento == "Docente":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),

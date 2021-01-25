@@ -18,6 +18,8 @@ alter sequence public.graph_pergunta_id_seq restart with 29;
 alter sequence public.graph_segmento_id_seq restart with 8;
 alter sequence public.graph_perguntasegmento_id_seq restart with 100;
 alter sequence public.graph_respostaobjetiva_id_seq restart with 7;
+alter sequence public.graph_participacaopergunta_id_seq restart with 37158;
+alter sequence public.graph_pessoa_id_seq restart with 2780;
 
 INSERT INTO public.graph_campus (id, nome) VALUES (1, 'Águas Lindas');
 INSERT INTO public.graph_campus (id, nome) VALUES (2, 'Anápolis');

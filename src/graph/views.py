@@ -21,9 +21,9 @@ def apianswer(request):
     elif skey == "zc3WsGum":
         segmento = "Docente"
     elif skey == "g3YTAfpT":
-        segmento = "Técnico Administrativo Câmpus"
-    elif skey == "4jn7qduk":
-        segmento = "Técnico Administrativo Reitoria"
+        segmento = "Servidores Técnicos"
+    # elif request.path == "/4jn7qduk":
+    #     segmento = "Técnico Administrativo Reitoria"
 
     if request.method == "GET":
         # campuses = [{'id': row['id'], 'nome': row['nome']} for row in Campus.objects.all().order_by('nome').values('id', 'nome')]
@@ -68,9 +68,9 @@ def answer(request):
     elif request.path == "/zc3WsGum":
         segmento = "Docente"
     elif request.path == "/g3YTAfpT":
-        segmento = "Técnico Administrativo Câmpus"
-    elif request.path == "/4jn7qduk":
-        segmento = "Técnico Administrativo Reitoria"
+        segmento = "Servidores Técnicos"
+    # elif request.path == "/4jn7qduk":
+    #     segmento = "Técnico Administrativo Reitoria"
 
     if request.method == "GET":
         cursos = json.dumps(list(Curso.objects.all().order_by(
