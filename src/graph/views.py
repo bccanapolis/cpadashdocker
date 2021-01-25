@@ -30,26 +30,49 @@ def apianswer(request):
 
         ultimo_ano = PerguntaSegmento.objects.order_by('-ano').values('ano').first()['ano']
 
-        perguntas = [
-            {'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
-             'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
-            Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
-                perguntasegmento__ano=ultimo_ano).order_by("dimensao__eixo").order_by("dimensao__eixo").order_by(
-                "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo',
-                               'perguntasegmento__ano').distinct()]
+        perguntas = [{'id': pergunta['id'],
+                      'titulo': pergunta['titulo'],
+                      'tipo': pergunta['tipo'],
+                      'lotacao': pergunta['perguntasegmento__lotacao__titulo'],
+                      'dimensao': pergunta['dimensao__dimensao'],
+                      'eixo': pergunta['dimensao__eixo__eixo']} for pergunta in
+                     Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
+                         perguntasegmento__ano=ultimo_ano).order_by("dimensao__eixo").order_by(
+                         "dimensao__eixo").order_by(
+                         "tipo").values('id', 'titulo', 'tipo', 'dimensao__dimensao', 'dimensao__eixo__eixo',
+                                        'perguntasegmento__lotacao__titulo',
+                                        'perguntasegmento__ano').distinct()]
 
-        resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta
+        resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for
+                          pergunta
                           in RespostaObjetiva.objects.all().order_by("-value").values('id', 'titulo', 'value')]
 
         segmento = Segmento.objects.get(nome=segmento)
+
+        eixos = {}
+
+        for pergunta in perguntas:
+            eixo = pergunta['eixo']
+            dimensao = pergunta['dimensao']
+
+            if eixo not in eixos:
+                eixos[eixo] = {}
+            if dimensao not in eixos[eixo]:
+                eixos[eixo][dimensao] = []
+
+            pergunta.pop('eixo', None)
+            pergunta.pop('dimensao', None)
+
+            eixos[eixo][dimensao].append(pergunta)
 
         return JsonResponse({
             "segmento": {'id': segmento.id, 'nome': segmento.nome},
             # "campus": campuses,
             "ano": ultimo_ano,
-            "perguntas": perguntas,
+            "perguntas": eixos,
             "resp_objetivas": resp_objetivas
         })
+
     elif request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
