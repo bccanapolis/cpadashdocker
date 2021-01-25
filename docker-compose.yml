@@ -50,5 +50,5 @@ volumes:
 networks:
   default:
     external:
-      name: postgres
+      name: nginx-proxy
       
