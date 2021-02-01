@@ -84,46 +84,6 @@ def apianswer(request):
         })
 
 
-# def answer(request):
-#     segmento = ''
-#     if request.path == "/s4UkHMQC":
-#         segmento = "Estudante"
-#     elif request.path == "/zc3WsGum":
-#         segmento = "Docente"
-#     elif request.path == "/g3YTAfpT":
-#         segmento = "Servidores Técnicos"
-#     # elif request.path == "/4jn7qduk":
-#     #     segmento = "Técnico Administrativo Reitoria"
-#
-#     if request.method == "GET":
-#         cursos = json.dumps(list(Curso.objects.all().order_by(
-#             "nome").values('id', 'nome')))
-#
-#         tiposPessoa = Segmento.objects.all().order_by("-id").values('id', 'nome')
-#         campuses = Campus.objects.all().order_by('nome').values('id', 'nome')
-#         perguntas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'tipo': pergunta['tipo'],
-#                       'lotacao': pergunta['perguntasegmento__lotacao__titulo']} for pergunta in
-#                      Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).order_by("dimensao").order_by(
-#                          "tipo").values('id', 'titulo', 'tipo', 'dimensao', 'perguntasegmento__lotacao__titulo')]
-#         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for pergunta
-#                           in RespostaObjetiva.objects.all().order_by("-value").values('id', 'titulo', 'value')]
-#         return render(request, "graph/answer.html", {
-#             "route": segmento, "cursos": cursos, "tiposPessoa": tiposPessoa, "campus": campuses, "perguntas": perguntas,
-#             "resp_objetivas": resp_objetivas
-#         })
-#     elif request.method == "POST":
-#         form = request.POST
-#         naoaplica = request.POST.get("naoaplica")
-#         ParticipacaoPergunta.create_participacao(naoaplica=naoaplica, atuacao=form['atuacao'], lotacao=form['lotacao'],
-#                                                  segmento=segmento, curso=form['curso'], campus=form['campus'],
-#                                                  perguntas=form)
-#         # Atualiza os gráficos
-#         # with connection.cursor() as cursor:
-#         #     cursor.execute('refresh materialized view informacoes')
-#         #     cursor.close()
-#         return HttpResponseRedirect("/?obrigado=true")
-
-
 def apiano(request):
     with connection.cursor() as cursor:
         cursor.execute('select distinct ano from informacoes order by ano desc')
@@ -138,24 +98,33 @@ def apiatuacao(request):
     campus = request.GET.get("campus", None)
     segmento = request.GET.get("segmento", None)
     ano = request.GET.get("ano", None)
+    eixo = request.GET.get("eixo", None)
+    dimensao = request.GET.get("dimensao", None)
     atuacao = []
-    if pergunta is not None:
-        sql = 'select distinct atuacao_id, atuacao from informacoes where pergunta_id = {} and ano = {} '.format(
-            int(pergunta), int(ano))
-        if campus is not None:
-            sql += 'and campus_id = {} '.format(int(campus))
-        if segmento is not None:
-            sql += 'and segmento_id = {} '.format(int(segmento))
-        if ano is not None:
-            sql += 'and ano = {} '.format(int(ano))
-        sql += 'and atuacao IS NOT NULL order by atuacao'
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            atuacao = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
 
-    else:
+    if pergunta is None:
         atuacao = [{'id': atuacao['id'], 'nome': atuacao['titulo']} for atuacao in
                    Atuacao.objects.values('id', 'titulo').all()]
+        return JsonResponse({"atuacao": atuacao})
+
+    sql = 'select distinct atuacao_id, atuacao from informacoes where pergunta_id = {} and ano = {} '.format(
+        int(pergunta), int(ano))
+
+    if campus is not None:
+        sql += 'and campus_id = {} '.format(int(campus))
+    if segmento is not None:
+        sql += 'and segmento_id = {} '.format(int(segmento))
+    if dimensao is not None and dimensao != "0":
+        sql += ' and dimensao_id = {} '.format(int(dimensao))
+    if eixo is not None and eixo != "0":
+        sql += ' and eixo_id = {} '.format(int(eixo))
+
+    sql += 'and atuacao IS NOT NULL order by atuacao'
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        atuacao = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
+
     return JsonResponse({"atuacao": atuacao})
 
 
@@ -164,22 +133,33 @@ def apilotacao(request):
     campus = request.GET.get("campus", None)
     segmento = request.GET.get("segmento", None)
     ano = request.GET.get("ano", None)
+    eixo = request.GET.get("eixo", None)
+    dimensao = request.GET.get("dimensao", None)
     lotacao = []
-    if pergunta is not None:
-        sql = 'select distinct lotacao_id, lotacao from informacoes where pergunta_id = {} and ano = {} '.format(
-            int(pergunta), int(ano))
-        if campus is not None:
-            sql += 'and campus_id = {} '.format(int(campus))
-        if segmento is not None:
-            sql += 'and segmento_id = {} '.format(int(segmento))
-        sql += 'and lotacao IS NOT NULL order by lotacao'
 
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            lotacao = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
-    else:
+    if pergunta is None:
         lotacao = [{'id': lotacao['id'], 'nome': lotacao['titulo']} for lotacao in
                    Lotacao.objects.values('id', 'titulo').all()]
+        return JsonResponse({"lotacao": lotacao})
+
+    sql = 'select distinct lotacao_id, lotacao from informacoes where pergunta_id = {} and ano = {} '.format(
+        int(pergunta), int(ano))
+
+    if campus is not None:
+        sql += 'and campus_id = {} '.format(int(campus))
+    if segmento is not None:
+        sql += 'and segmento_id = {} '.format(int(segmento))
+    if dimensao is not None and dimensao != "0":
+        sql += ' and dimensao_id = {} '.format(int(dimensao))
+    if eixo is not None and eixo != "0":
+        sql += ' and eixo_id = {} '.format(int(eixo))
+
+    sql += 'and lotacao IS NOT NULL order by lotacao'
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        lotacao = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
+
     return JsonResponse({"lotacao": lotacao})
 
 
@@ -188,7 +168,11 @@ def apicurso(request):
     campus = request.GET.get("campus", None)
     segmento = request.GET.get("segmento", None)
     ano = request.GET.get("ano", None)
+    eixo = request.GET.get("eixo", None)
+    dimensao = request.GET.get("dimensao", None)
+
     cursos = []
+
     if pergunta is None:
         cursos = [{'id': curso['id'], 'nome': curso['nome']} for curso in
                   Curso.objects.filter(cursocampus__campus_id=campus).exclude(nome='Não Aplica').order_by(
@@ -201,6 +185,10 @@ def apicurso(request):
             sql += 'and campus_id = {} '.format(int(campus))
         if segmento is not None:
             sql += 'and segmento_id = {} '.format(int(segmento))
+        if dimensao is not None and dimensao != "0":
+            sql += ' and dimensao_id = {} '.format(int(dimensao))
+        if eixo is not None and eixo != "0":
+            sql += ' and eixo_id = {} '.format(int(eixo))
         sql += 'order by curso'
 
         with connection.cursor() as cursor:
@@ -210,74 +198,94 @@ def apicurso(request):
 
 
 def apicampus(request):
-    pergunta = request.GET.get("pergunta", -1)
+    pergunta = request.GET.get("pergunta", None)
     segmento = request.GET.get("segmento", None)
     ano = request.GET.get("ano", None)
+    eixo = request.GET.get("eixo", None)
+    dimensao = request.GET.get("dimensao", None)
     campus = []
-    # LISTAR TODOS OS CAMPUS
-    if int(pergunta) == -1:
+
+    if pergunta is None:  # LISTAR TODOS OS CAMPUS
         campus = [{'id': row['id'], 'nome': row['nome']} for row in
                   Campus.objects.all().order_by('nome').values('id', 'nome')]
-    elif int(pergunta) == 0 and segmento is None and ano is not None:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                'select distinct campus, campus_id from informacoes where ano = {} order by campus;'.format(int(ano)))
-            campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
-    elif int(pergunta) == 0 and ano is not None:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                'select distinct campus, campus_id from informacoes where segmento_id = {} and ano = {} order by campus;'.format(
-                    int(segmento), int(ano)))
-            campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
-    elif segmento is None and ano is not None:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                'select distinct campus, campus_id from informacoes where pergunta_id = {} and ano = {} order by campus;'.format(
-                    int(pergunta), int(ano)))
-            campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
-    # LISTAR TODOS OS CAMPUS DENTRO DE INFORMAÇÕES
-    else:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                'select distinct campus, campus_id from informacoes where pergunta_id = {} and segmento_id = {} and ano = {} order by campus;'.format(
-                    int(pergunta), int(segmento), int(ano)))
-            campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
+
+        return JsonResponse({'campus': campus})
+
+    sql = 'select distinct campus, campus_id from informacoes where ano = {} '.format(int(ano))
+
+    if pergunta is not '0':
+        sql += ' and pergunta_id = {}'.format(int(pergunta))
+    if segmento is not None:
+        sql += ' and segmento_id = {} '.format(int(segmento))
+    if dimensao is not None and dimensao != "0":
+        sql += ' and dimensao_id = {} '.format(int(dimensao))
+    if eixo is not None and eixo != "0":
+        sql += ' and eixo_id = {} '.format(int(eixo))
+
+    sql += ' order by campus;'
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        campus = [{'id': row[1], 'campus': row[0]} for row in cursor.fetchall()]
 
     return JsonResponse({'campus': campus})
 
 
+def apiupdate(request):
+    with connection.cursor() as cursor:
+        cursor.execute('refresh materialized view informacoes')
+        cursor.close()
+    return HttpResponseRedirect('http://cpa.bcc.anapolis.ifg.edu.br/relatorio')
+
+
+def apipergunta(request):
+    ano = request.GET.get("ano", None)
+    eixo = request.GET.get("eixo", None)
+    dimensao = request.GET.get("dimensao", None)
+
+    if ano is not None:
+        sql = 'select distinct pergunta_id, pergunta from informacoes where pergunta not like \'Caso%\' and ano = {}'.format(
+            int(ano))
+
+        if dimensao is not None and dimensao != "0":
+            sql += ' and dimensao_id = {} '.format(int(dimensao))
+        if eixo is not None and eixo != "0":
+            sql += ' and eixo_id = {} '.format(int(eixo))
+
+        sql += ' order by pergunta'
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            data = [{'id': row[0], 'titulo': row[1]} for row in cursor.fetchall()]
+
+    return JsonResponse({'dados': data})
+
+
 def apigrafico(request):
-    update = request.GET.get("update", None)
     pergunta = request.GET.get("pergunta", None)
     segmento = request.GET.get("segmento", None)
     atuacao = request.GET.get("atuacao", None)
     lotacao = request.GET.get("lotacao", None)
+    dimensao = request.GET.get("dimensao", None)
+    eixo = request.GET.get("eixo", None)
     campus = request.GET.get("campus", None)
     curso = request.GET.get("curso", None)
     ano = request.GET.get("ano", None)
     data = []
     segmentos = []
     respostas = []
-    if update is not None:
-        with connection.cursor() as cursor:
-            cursor.execute('refresh materialized view informacoes')
-            cursor.close()
-        return HttpResponseRedirect('http://cpa.bcc.anapolis.ifg.edu.br/relatorio')
-    elif pergunta is None and ano is not None:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                'select distinct pergunta_id, pergunta from informacoes where pergunta not like \'Caso%\' and ano = {} order by pergunta'.format(
-                    int(ano)))
-            data = [{'id': row[0], 'titulo': row[1]} for row in cursor.fetchall()]
 
-        return JsonResponse({'dados': data})
-    elif pergunta != "0":
+    if pergunta != "0":
         sql = 'select count(pessoa), segmento, resposta, resposta_id from informacoes where '
         sql += 'pergunta_id = {} '.format(int(pergunta))
         if segmento is not None:
             sql += ' and segmento_id = {} '.format(int(segmento))
         if ano is not None:
             sql += ' and ano = {} '.format(int(ano))
+        if dimensao is not None and dimensao != "0":
+            sql += ' and dimensao_id = {} '.format(int(dimensao))
+        if eixo is not None and eixo != "0":
+            sql += ' and eixo_id = {} '.format(int(eixo))
         if campus is not None:
             sql += ' and campus_id = {} '.format(int(campus))
         if curso is not None:
@@ -287,7 +295,7 @@ def apigrafico(request):
         if lotacao is not None:
             sql += ' and lotacao_id = {} '.format(int(lotacao))
 
-        sql += ' group by segmento, resposta, resposta_id order by resposta_id'
+        sql += ' group by segmento, resposta, resposta_id order by resposta_id;'
         total = 0
         indicador = 0
         # print(sql)
@@ -316,11 +324,16 @@ def apigrafico(request):
         return JsonResponse(
             {'pergunta': pergunta, 'indicador': indicador, 'roles': segmentos, 'respostas': respostas,
              'data': data})
-    else:
+    else:  # grafico em pizza
         sql = 'select count(distinct pessoa), campus'
         fetch = ''
         group = ' group by campus'
         where = ' where ano = {}'.format(int(ano))
+
+        if dimensao is not None and dimensao != "0":
+            where += ' and dimensao_id = {} '.format(int(dimensao))
+        if eixo is not None and eixo != "0":
+            where += ' and eixo_id = {} '.format(int(eixo))
 
         if campus is not None and segmento is not None:
             nome_segmento = Segmento.objects.get(pk=segmento).nome
@@ -346,7 +359,8 @@ def apigrafico(request):
             group += ', segmento'
             where += ' and campus_id = {}'.format(int(campus))
 
-        sql = sql + fetch + ' from informacoes ' + where + group
+        sql = sql + fetch + ' from informacoes ' + where + group + ';'
+
         with connection.cursor() as cursor:
             cursor.execute(sql)
             graficos = cursor.fetchall()
@@ -368,18 +382,52 @@ def apigrafico(request):
 def apisegmento(request):
     pergunta = request.GET.get('pergunta', None)
     ano = request.GET.get('ano', None)
+    eixo = request.GET.get("eixo", None)
+    dimensao = request.GET.get("dimensao", None)
     segmentos = []
     if pergunta is not None:
-        if int(pergunta) != 0:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    'select distinct segmento_id, segmento from informacoes where pergunta_id = {} and ano = {} order by segmento '.format(
-                        int(pergunta), int(ano)))
-                segmentos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
-        else:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    'select distinct segmento_id, segmento from informacoes where ano = {} order by segmento'.format(
-                        ano))
-                segmentos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
+        sql = 'select distinct segmento_id, segmento from informacoes where ano = {} '.format(int(ano))
+
+        if pergunta is not '0':
+            sql += ' and pergunta_id = {} '.format(int(pergunta))
+        if dimensao is not None and dimensao != "0":
+            sql += ' and dimensao_id = {} '.format(int(dimensao))
+        if eixo is not None and eixo != "0":
+            sql += ' and eixo_id = {} '.format(int(eixo))
+
+        sql += ' order by segmento;'
+
+        # print(sql)
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            segmentos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall()]
+
     return JsonResponse({'segmentos': segmentos})
+
+
+def apieixo(request):
+    ano = request.GET.get('ano', None)
+    eixos = []
+    if ano is not None:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'select distinct eixo_id, eixo from informacoes where ano = {} order by eixo'.format(int(ano)))
+            eixos = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall() if row[0] is not None]
+    return JsonResponse({'eixos': eixos})
+
+
+def apidimensao(request):
+    ano = request.GET.get('ano', None)
+    eixo = request.GET.get('eixo', None)
+
+    dimensoes = []
+
+    if ano is not None and eixo is not None:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'select distinct dimensao_id, dimensao from informacoes where ano = {} and eixo_id = {} order by dimensao'.format(
+                    int(ano), int(eixo)))
+            dimensoes = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall() if row[0] is not None]
+
+    return JsonResponse({'dimensoes': dimensoes})
