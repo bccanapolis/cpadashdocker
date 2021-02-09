@@ -184,7 +184,7 @@ class ParticipacaoPergunta(models.Model):
                                              curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                            curso__nome='Não Aplica')
                                              )
-        elif segmento == "Servidor Técnico Reitoria":
+        elif segmento == "Servidor Técnico da Reitoria":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
                                              lotacao=None,

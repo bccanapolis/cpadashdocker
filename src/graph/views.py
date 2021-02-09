@@ -23,7 +23,7 @@ def apianswer(request):
     elif skey == "g3YTAfpT":
         segmento = "Servidor Técnico"
     elif skey == "4jn7qduk":
-        segmento = "Servidor Técnico Reitoria"
+        segmento = "Servidor Técnico da Reitoria"
 
     if request.method == "GET":
         # campuses = [{'id': row['id'], 'nome': row['nome']} for row in Campus.objects.all().order_by('nome').values('id', 'nome')]
