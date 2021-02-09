@@ -184,13 +184,13 @@ class ParticipacaoPergunta(models.Model):
                                              curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                            curso__nome='Não Aplica')
                                              )
-        # elif segmento == "Técnico Administrativo Reitoria":
-        #     pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
-        #                                      atuacao=None,
-        #                                      lotacao=None,
-        #                                      curso=CursoCampus.objects.get(campus_id=int(campus),
-        #                                                                    curso__nome='Não Aplica')
-        #                                      )
+        elif segmento == "Servidor Técnico Reitoria":
+            pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
+                                             atuacao=None,
+                                             lotacao=None,
+                                             curso=CursoCampus.objects.get(campus_id=int(campus),
+                                                                           curso__nome='Não Aplica')
+                                             )
 
         elif segmento == "Docente":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),

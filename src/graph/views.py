@@ -22,8 +22,8 @@ def apianswer(request):
         segmento = "Docente"
     elif skey == "g3YTAfpT":
         segmento = "Servidor Técnico"
-    # elif request.path == "/4jn7qduk":
-    #     segmento = "Técnico Administrativo Reitoria"
+    elif skey == "4jn7qduk":
+        segmento = "Servidor Técnico Reitoria"
 
     if request.method == "GET":
         # campuses = [{'id': row['id'], 'nome': row['nome']} for row in Campus.objects.all().order_by('nome').values('id', 'nome')]
@@ -213,7 +213,7 @@ def apicampus(request):
 
     sql = 'select distinct campus, campus_id from informacoes where ano = {} '.format(int(ano))
 
-    if pergunta is not '0':
+    if pergunta != '0':
         sql += ' and pergunta_id = {}'.format(int(pergunta))
     if segmento is not None:
         sql += ' and segmento_id = {} '.format(int(segmento))
@@ -388,7 +388,7 @@ def apisegmento(request):
     if pergunta is not None:
         sql = 'select distinct segmento_id, segmento from informacoes where ano = {} '.format(int(ano))
 
-        if pergunta is not '0':
+        if pergunta != '0':
             sql += ' and pergunta_id = {} '.format(int(pergunta))
         if dimensao is not None and dimensao != "0":
             sql += ' and dimensao_id = {} '.format(int(dimensao))
