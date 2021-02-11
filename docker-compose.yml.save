@@ -14,8 +14,7 @@ services:
     environment:
       VIRTUAL_HOST: api.cpa.bcc.anapolis.ifg.edu.br
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: *.cpa.bcc.anapolis.ifg.edu.br
-      LETSENCRYPT_EMAIL: "devbaraus@gmail.com"
+      LETSENCRYPT
   web:
     build: .
     container_name: cpa_app
