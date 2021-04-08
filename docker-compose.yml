@@ -10,7 +10,7 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
       - /static:/static
     depends_on:
-      - web
+      - cpaweb
     environment:
       VIRTUAL_HOST: api.cpa.bcc.anapolis.ifg.edu.br
       VIRTUAL_PORT: 8000
@@ -22,7 +22,7 @@ services:
     restart: always
     command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations graph && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:8000"
     depends_on:
-      - db2
+      - cpadb
     volumes:
       - ./src:/src
       - /static:/static
