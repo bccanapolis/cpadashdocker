@@ -30,7 +30,7 @@ services:
       - "8000"
     environment:
       DATABASE_PASS: cpadash2019
-      DATABASE_HOST: db2
+      DATABASE_HOST: cpadb
       DATABASE_PORT: 5432
       DATABASE_NAME: cpadash
   cpadb:
