@@ -1,10 +1,22 @@
 from datetime import datetime
-
 from django.db import models
-from django.utils import timezone
 
 
-# TODO Arrumar para escalar perguntas por ano: todos os será adicionado novas perguntas e/ou utilizadas as já no banco de dados, portanto é necessário adicionar uma data para cara pergunta/segmento
+class Questionario(models.Model):
+    class Meta:
+        verbose_name_plural = 'Questionários'
+
+    # YEAR_CHOICES = []
+    # for r in range(2019, datetime.now().year + 5):
+    #     YEAR_CHOICES.append((r, r))
+
+    ano = models.IntegerField(default=datetime.now().year)
+    grafico_publico = models.BooleanField(default=False)
+    perguntas_publico = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.ano)
+
 
 class Segmento(models.Model):
     class Meta:
@@ -61,9 +73,10 @@ class Eixo(models.Model):
         verbose_name_plural = 'Eixo'
 
     eixo = models.CharField(max_length=100)
+    questionario = models.ForeignKey(Questionario, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.eixo
+        return f'{self.questionario.ano} -- {self.eixo}'
 
 
 class Dimensao(models.Model):
@@ -83,7 +96,6 @@ class CursoCampus(models.Model):
 
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    quant = models.IntegerField(null=True)
 
     def __str__(self):
         return "{} -- {}".format(self.campus, self.curso)
@@ -113,25 +125,20 @@ class Pergunta(models.Model):
     dimensao = models.ForeignKey(Dimensao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return self.titulo
+        return f'{self.dimensao.eixo.questionario.ano} - {self.titulo}'
 
 
 class PerguntaSegmento(models.Model):
     class Meta:
         verbose_name_plural = 'PerguntaSegmento'
 
-    YEAR_CHOICES = []
-    for r in range(2019, datetime.now().year + 1):
-        YEAR_CHOICES.append((r, r))
-
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE)
     atuacao = models.ForeignKey(Atuacao, null=True, on_delete=models.SET_NULL)
     lotacao = models.ForeignKey(Lotacao, null=True, on_delete=models.SET_NULL)
-    ano = models.IntegerField(default=datetime.now().year, choices=YEAR_CHOICES)
 
     def __str__(self):
-        return "{} -- {} -- {}".format(self.ano, self.segmento, self.pergunta)
+        return "{} -- {}".format(self.segmento, self.pergunta)
 
 
 # Não utilizado

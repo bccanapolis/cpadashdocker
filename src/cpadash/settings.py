@@ -24,9 +24,10 @@ SECRET_KEY = 'i$c)5gglo=610)&n7&nq_0&%c&#q4ti7uh2z&sm31%q12q%7s*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'web', 'cpa.localhost', 'localhost', '0.0.0.0', '127.0.0.1', 'api.cpa.bcc.anapolis.ifg.edu.br', 'cpa.bcc.anapolis.ifg.edu.br']
+ALLOWED_HOSTS = ['*', 'web', 'cpa.localhost', 'localhost', '0.0.0.0', '127.0.0.1', 'api.cpa.bcc.anapolis.ifg.edu.br',
+                 'cpa.bcc.anapolis.ifg.edu.br']
 CORS_ALLOW_METHODS = [
-    'GET', 'POST'
+    'GET', 'POST', 'PUT'
 ]
 CORS_ORIGIN_ALLOW_ALL = True  # ativando o cors para o DJANGO
 CORS_ALLOW_CREDENTIALS = True
@@ -40,8 +41,104 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'graph.apps.GraphConfig',
+
+    'rest_framework',
+    'rest_framework.authtoken',
+    'graphene_django',
     'corsheaders',
+
+    'graph.apps.GraphConfig',
+]
+
+GRAPHENE = {
+    "SCHEMA": "cpadash.schema.schema"
+}
+
+GRAPHENE_GENERATOR_MODELS = [
+    {
+        'name': 'questionario',
+        'path': 'graph.models.Questionario',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'eixo',
+        'path': 'graph.models.Eixo',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'dimensao',
+        'path': 'graph.models.Dimensao',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'segmento',
+        'path': 'graph.models.Segmento',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'atuacao',
+        'path': 'graph.models.Atuacao',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'lotacao',
+        'path': 'graph.models.Lotacao',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'campus',
+        'path': 'graph.models.Campus',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'curso',
+        'path': 'graph.models.Curso',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'pergunta',
+        'path': 'graph.models.Pergunta',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'pergunta_segmento',
+        'path': 'graph.models.PerguntaSegmento',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'resposta_objetiva',
+        'path': 'graph.models.RespostaObjetiva',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
+    {
+        'name': 'participacao',
+        'path': 'graph.models.ParticipacaoPergunta',
+        'require_auth': {
+            'mutations': ["create", 'update', 'delete']
+        }
+    },
 ]
 
 MIDDLEWARE = [
@@ -55,7 +152,14 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # <-- And here
+    ],
+}
+
 ROOT_URLCONF = 'cpadash.urls'
+APPEND_SLASH = False
 
 TEMPLATES = [
     {

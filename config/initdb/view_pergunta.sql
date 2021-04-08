@@ -33,3 +33,5 @@ from graph_participacaopergunta participacao
          left join graph_eixo eixo on dimensao.eixo_id = eixo.id;
 
 refresh materialized view informacoes;
+
+update table

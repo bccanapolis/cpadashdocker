@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.csrf import csrf_exempt
 from graph.views import index
 
+from src.graph.authenticated.views import DRFAuthenticatedGraphQLView
+
 urlpatterns = [
-    path('*', index , name='home'),
-    path('admin/', admin.site.urls),
-    path('', include('graph.urls'))
+    path('*', index, name='home'),
+    path(r'admin', admin.site.urls),
+    path(r'graphql', csrf_exempt(DRFAuthenticatedGraphQLView.as_view(graphiql=True))),
+    path(r'', include('graph.urls')),
 ]

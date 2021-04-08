@@ -1,13 +1,14 @@
 from django.urls import path
 from . import views
+from .authenticated import views as auth
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path(r'', views.index, name='index'),
-    # path(r's4UkHMQC', views.answer, name='answerestudante'),
-    # path(r'zc3WsGum', views.answer, name='answerdocente'),
-    # path(r'4jn7qduk', views.answer, name='answerreitoria'),
-    # path(r'g3YTAfpT', views.answer, name='answercampus'),
-    # path(r'v1/resposta', views.apianswer, name="resposta"),
+    path(r'admin/auth/user', auth.AuthView.as_view(), name='auth_user'),
+    path(r'admin/auth/login', obtain_auth_token, name='auth_token'),
+    path(r'admin/me', auth.UserView.as_view(), name='auth_user'),
+    path(r'v1/resposta', views.apianswer, name="resposta"),
     path(r'v1/grafico', views.apigrafico, name="graficos"),
     path(r'v1/curso', views.apicurso, name="curso"),
     path(r'v1/campus', views.apicampus, name="campus"),
@@ -19,4 +20,5 @@ urlpatterns = [
     path(r'v1/update', views.apiupdate, name="update"),
     path(r'v1/pergunta', views.apipergunta, name="pergunta"),
     path(r'v1/dimensao', views.apidimensao, name="dimensao"),
+    path(r'v1/relatorio', views.apirelatorio, name="relatorio"),
 ]

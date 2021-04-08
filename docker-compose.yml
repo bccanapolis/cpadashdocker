@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  nginx:
+  cpanginx:
     image: nginx:latest
     container_name: cpa_nginx
     ports:
@@ -16,7 +16,7 @@ services:
       VIRTUAL_PORT: 8000
       LETSENCRYPT_HOST: api.cpa.bcc.anapolis.ifg.edu.br
       LETSENCRYPT_EMAIL: "devbaraus@gmail.com"
-  web:
+  cpaweb:
     build: .
     container_name: cpa_app
     restart: always
@@ -33,7 +33,7 @@ services:
       DATABASE_HOST: db2
       DATABASE_PORT: 5432
       DATABASE_NAME: cpadash
-  db2:
+  cpadb:
     image: postgres:alpine
     container_name: cpa_db
     restart: always

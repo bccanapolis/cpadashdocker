@@ -1,11 +1,16 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+import os
+
+from django.shortcuts import redirect
+from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from openpyxl.styles import PatternFill
+
 from .models import Campus, Segmento, Curso, Pergunta, ParticipacaoPergunta, RespostaObjetiva, \
-    Atuacao, Lotacao, PerguntaSegmento
+    Atuacao, Lotacao, Questionario
 from django.db import connection
 import json
 from django.http import JsonResponse
+from django.conf import settings
 
 
 def index(request):
@@ -28,7 +33,8 @@ def apianswer(request):
     if request.method == "GET":
         # campuses = [{'id': row['id'], 'nome': row['nome']} for row in Campus.objects.all().order_by('nome').values('id', 'nome')]
 
-        ultimo_ano = PerguntaSegmento.objects.order_by('-ano').values('ano').first()['ano']
+        ultimo_ano = Questionario.objects.order_by('-ano').filter(perguntas_publico__exact=True).values('id',
+                                                                                                        'ano').first()
 
         perguntas = [{'id': pergunta['id'],
                       'titulo': pergunta['titulo'],
@@ -37,11 +43,11 @@ def apianswer(request):
                       'dimensao': pergunta['dimensao__dimensao'],
                       'eixo': pergunta['dimensao__eixo__eixo']} for pergunta in
                      Pergunta.objects.filter(perguntasegmento__segmento__nome=segmento).filter(
-                         perguntasegmento__ano=ultimo_ano).order_by("dimensao__eixo").order_by(
+                         dimensao__eixo__questionario=ultimo_ano['id']).order_by("dimensao__eixo").order_by(
                          "dimensao__eixo").order_by(
                          "tipo").values('id', 'titulo', 'tipo', 'dimensao__dimensao', 'dimensao__eixo__eixo',
                                         'perguntasegmento__lotacao__titulo',
-                                        'perguntasegmento__ano').distinct()]
+                                        'dimensao__eixo__questionario').distinct()]
 
         resp_objetivas = [{'id': pergunta['id'], 'titulo': pergunta['titulo'], 'value': pergunta['value']} for
                           pergunta
@@ -68,7 +74,7 @@ def apianswer(request):
         return JsonResponse({
             "segmento": {'id': segmento.id, 'nome': segmento.nome},
             # "campus": campuses,
-            "ano": ultimo_ano,
+            "ano": ultimo_ano['ano'],
             "perguntas": eixos,
             "resp_objetivas": resp_objetivas
         })
@@ -431,3 +437,122 @@ def apidimensao(request):
             dimensoes = [{'id': row[0], 'nome': row[1]} for row in cursor.fetchall() if row[0] is not None]
 
     return JsonResponse({'dimensoes': dimensoes})
+
+
+def apirelatorio(request):
+    try:
+        questionario = int(request.GET.get('questionario'))
+    except TypeError:
+        return HttpResponseBadRequest
+
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, Color, Fill
+    from openpyxl.utils import get_column_letter
+    wb = Workbook()
+
+    dest_filename = f'graph/static/relatorio_{questionario}.xlsx'
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """select distinct ano from public.informacoes where ano = %d;""" % questionario)
+        anos = [ano[0] for ano in cursor.fetchall()]
+
+        if questionario not in anos:
+            raise Http404
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """select distinct pergunta, pergunta_id from public.informacoes where ano = %d order by pergunta_id;""" % questionario)
+        perguntas = {}
+        for pergunta in cursor.fetchall():
+            perguntas[pergunta[0]] = pergunta[1]
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """select distinct campus, campus_id from public.informacoes where ano = %d;""" % questionario)
+        campuses = {}
+        for campus in cursor.fetchall():
+            campuses[campus[0]] = campus[1]
+
+    spreadsheet = {}
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """select pessoa, segmento, curso, lotacao, atuacao, pergunta_id, resposta, campus_id from public.informacoes where ano = %d order by pergunta_id""" % questionario)
+
+        for row in cursor.fetchall():
+            pessoa = row[0]
+            segmento = row[1]
+            curso = row[2]
+            lotacao = row[3]
+            atuacao = row[4]
+            pergunta_id = row[5]
+            resposta = row[6]
+            campus_id = row[7]
+
+            if campus_id not in spreadsheet:
+                spreadsheet[campus_id] = {}
+
+            if pessoa not in spreadsheet[campus_id]:
+                spreadsheet[campus_id][pessoa] = {
+                    'pessoa': pessoa,
+                    'segmento': segmento,
+                    'curso': curso if curso != 'Não Aplica' else '',
+                    'lotacao': lotacao,
+                    'atuacao': atuacao,
+                    'perguntas': {}
+                }
+
+            spreadsheet[campus_id][pessoa]['perguntas'][pergunta_id] = resposta
+
+    spreadsheet_perguntas = {}
+
+    for i, pergunta in enumerate(list(perguntas.values())):
+        spreadsheet_perguntas[pergunta] = i
+
+    for index, campus in enumerate(list(campuses.keys())):
+        if index == 0:
+            wb_current = wb.active
+            wb_current.title = campus
+        else:
+            wb_current = wb.create_sheet(campus)
+
+        ft = Font(color='ffffff', bold=True)
+        fill = PatternFill('solid', fgColor='000000')
+
+        for row in wb_current.iter_rows(min_row=1, max_row=1, min_col=1, max_col=len(list(perguntas.keys())) + 5):
+            for cell in row:
+                cell.fill = fill
+                cell.font = ft
+
+        wb_current['A1'] = 'ID pessoa'
+        wb_current['B1'] = 'Segmento'
+        wb_current['C1'] = 'Curso'
+        wb_current['D1'] = 'Lotação'
+        wb_current['E1'] = 'Area de Atuação'
+
+        for i, pergunta in enumerate(list(perguntas.values())):
+            wb_current[f'{get_column_letter(spreadsheet_perguntas[pergunta] + 6)}1'] = list(perguntas.keys())[i]
+
+        for i, pessoa in enumerate(list(spreadsheet[campuses[campus]].keys())):
+            wb_current[f'A{i + 2}'] = spreadsheet[campuses[campus]][pessoa]['pessoa']
+            wb_current[f'B{i + 2}'] = spreadsheet[campuses[campus]][pessoa]['segmento']
+            wb_current[f'C{i + 2}'] = spreadsheet[campuses[campus]][pessoa]['curso']
+            wb_current[f'D{i + 2}'] = spreadsheet[campuses[campus]][pessoa]['lotacao']
+            wb_current[f'E{i + 2}'] = spreadsheet[campuses[campus]][pessoa]['atuacao']
+
+            for j, pergunta in enumerate(list(spreadsheet[campuses[campus]][pessoa]['perguntas'].keys())):
+                wb_current[f'{get_column_letter(spreadsheet_perguntas[pergunta] + 6)}{i + 2}'] = \
+                    spreadsheet[campuses[campus]][pessoa]['perguntas'][pergunta]
+
+    wb.save(dest_filename)
+
+    return JsonResponse({'perguntas': perguntas})
+
+    # file_path = os.path.join(settings.MEDIA_ROOT, dest_filename)
+    # if os.path.exists(file_path):
+    #     with open(file_path, 'rb') as fh:
+    #         response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+    #         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+    #         return response
+    # raise Http404

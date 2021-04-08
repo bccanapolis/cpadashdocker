@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Pessoa, Curso, Campus, Eixo, Pergunta, Segmento, Atuacao, Dimensao, ParticipacaoPergunta, \
-    CursoCampus, PerguntaSegmento, RespostaObjetiva, Lotacao
+    CursoCampus, PerguntaSegmento, RespostaObjetiva, Lotacao, Questionario
 
 # Register your models here.
 admin.site.register(Pessoa)
@@ -16,3 +16,4 @@ admin.site.register(ParticipacaoPergunta)
 admin.site.register(CursoCampus)
 admin.site.register(PerguntaSegmento)
 admin.site.register(RespostaObjetiva)
+admin.site.register(Questionario)
