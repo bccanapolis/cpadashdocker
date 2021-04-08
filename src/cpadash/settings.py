@@ -26,6 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', 'cpa.localhost', 'localhost', '0.0.0.0', '127.0.0.1', 'api.cpa.bcc.anapolis.ifg.edu.br',
                  'cpa.bcc.anapolis.ifg.edu.br']
+
 CORS_ALLOW_METHODS = [
     'GET', 'POST', 'PUT'
 ]
