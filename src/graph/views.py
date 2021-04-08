@@ -439,6 +439,16 @@ def apidimensao(request):
     return JsonResponse({'dimensoes': dimensoes})
 
 
+def download_excel_file(path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+
 def apirelatorio(request):
     try:
         questionario = int(request.GET.get('questionario'))
@@ -451,6 +461,9 @@ def apirelatorio(request):
     wb = Workbook()
 
     dest_filename = f'graph/static/relatorio_{questionario}.xlsx'
+
+    if os.path.exists(dest_filename):
+        return download_excel_file(dest_filename)
 
     with connection.cursor() as cursor:
         cursor.execute(
@@ -547,12 +560,4 @@ def apirelatorio(request):
 
     wb.save(dest_filename)
 
-    return JsonResponse({'perguntas': perguntas})
-
-    # file_path = os.path.join(settings.MEDIA_ROOT, dest_filename)
-    # if os.path.exists(file_path):
-    #     with open(file_path, 'rb') as fh:
-    #         response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-    #         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-    #         return response
-    # raise Http404
+    return download_excel_file(dest_filename)
