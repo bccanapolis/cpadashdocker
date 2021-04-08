@@ -18,7 +18,7 @@ from django.urls import path, include
 from django.views.decorators.csrf import csrf_exempt
 from graph.views import index
 
-from src.graph.authenticated.views import DRFAuthenticatedGraphQLView
+from graph.authenticated.views import DRFAuthenticatedGraphQLView
 
 urlpatterns = [
     path('*', index, name='home'),
