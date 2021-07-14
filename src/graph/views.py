@@ -491,7 +491,7 @@ def apirelatorio(request):
 
     with connection.cursor() as cursor:
         cursor.execute(
-            """select pessoa, segmento, curso, lotacao, atuacao, pergunta_id, resposta, campus_id from public.informacoes where ano = %d order by pergunta_id""" % questionario)
+            """select pessoa, segmento, curso, lotacao, atuacao, pergunta_id, resposta, campus_id, subjetiva from public.informacoes where ano = %d order by pergunta_id""" % questionario)
 
         for row in cursor.fetchall():
             pessoa = row[0]
@@ -502,6 +502,9 @@ def apirelatorio(request):
             pergunta_id = row[5]
             resposta = row[6]
             campus_id = row[7]
+
+            if row[6] is None and row[8] is not None:
+                resposta = row[8]
 
             if campus_id not in spreadsheet:
                 spreadsheet[campus_id] = {}

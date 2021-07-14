@@ -11,6 +11,7 @@ select distinct pergunta.titulo   as pergunta,
                 segmento.id       as segmento_id,
                 objetiva.titulo   as resposta,
                 objetiva.id       as resposta_id,
+                participacao.res_subjetiva as subjetiva,
                 curso.id          as curso_id,
                 curso.nome        as curso,
                 campus.nome       as campus,
@@ -33,5 +34,3 @@ from graph_participacaopergunta participacao
          left join graph_eixo eixo on dimensao.eixo_id = eixo.id;
 
 refresh materialized view informacoes;
-
-update table
