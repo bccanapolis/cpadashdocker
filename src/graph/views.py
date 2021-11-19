@@ -1,4 +1,5 @@
 import os
+from datetime import date, datetime
 
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpResponseBadRequest
@@ -80,6 +81,13 @@ def apianswer(request):
         })
 
     elif request.method == 'POST':
+        now = datetime.now()
+        start_date = datetime.strptime(os.getenv('QUEST_START_DATE'), '%Y-%m-%d')
+        end_date = datetime.strptime(os.getenv('QUEST_END_DATE'), '%Y-%m-%d')
+
+        if now < start_date or now > end_date:
+            return HttpResponse(status=405)
+
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         ParticipacaoPergunta.create_participacao(atuacao=body['atuacao'], lotacao=body['lotacao'],
