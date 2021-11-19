@@ -97,6 +97,9 @@ class CursoCampus(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('curso', 'campus')
+
     def __str__(self):
         return "{} -- {}".format(self.campus, self.curso)
 
@@ -121,7 +124,7 @@ class Pergunta(models.Model):
 
     titulo = models.TextField()
     # Refere se pergunta é objetiva 1 ou subjetiva 2
-    tipo = models.IntegerField(null=False, default=1)
+    tipo = models.IntegerField(choices=((1, 'Objetiva'), (2, 'Subjetiva')), default=1)
     dimensao = models.ForeignKey(Dimensao, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
@@ -136,6 +139,9 @@ class PerguntaSegmento(models.Model):
     segmento = models.ForeignKey(Segmento, on_delete=models.CASCADE)
     atuacao = models.ForeignKey(Atuacao, null=True, on_delete=models.SET_NULL)
     lotacao = models.ForeignKey(Lotacao, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        unique_together = ('pergunta', 'segmento')
 
     def __str__(self):
         return "{} -- {}".format(self.segmento, self.pergunta)
