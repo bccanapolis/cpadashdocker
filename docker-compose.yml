@@ -18,6 +18,8 @@ services:
       LETSENCRYPT_EMAIL: "devbaraus@gmail.com"
   cpaweb:
     build: .
+    env_file:
+      - .env
     container_name: cpa_app
     restart: always
     command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations graph && python manage.py migrate && gunicorn cpadash.wsgi -b 0.0.0.0:8000"
