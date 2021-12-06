@@ -190,14 +190,14 @@ class ParticipacaoPergunta(models.Model):
     def create_participacao(atuacao, lotacao, segmento, curso, campus, perguntas, ano):
         pessoaId = None
         segmento = Segmento.objects.get(pk=int(segmento)).nome
-        if segmento == "Servidor Técnico":
+        if segmento == "Técnico Administrativo Câmpus":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
                                              lotacao=Lotacao.objects.get(id=int(lotacao)),
                                              curso=CursoCampus.objects.get(campus_id=int(campus),
                                                                            curso__nome='Não Aplica')
                                              )
-        elif segmento == "Servidor Técnico da Reitoria":
+        elif segmento == "Técnico Administrativo Reitoria":
             pessoaId = Pessoa.objects.create(segmento=Segmento.objects.get(nome=segmento),
                                              atuacao=None,
                                              lotacao=None,
