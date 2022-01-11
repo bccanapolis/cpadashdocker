@@ -11,9 +11,9 @@ jobs:
     - name: Deploy CPA Dash
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.SERVICES_HOST }}
-        username: ${{ secrets.SERVICES_USER }}
-        key: ${{ secrets.SERVICES_SSH_PRIVATE_KEY }}
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
         script: |
           cd cpa/cpadashdocker && git checkout master && git pull
           docker-compose down
