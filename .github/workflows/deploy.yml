@@ -13,7 +13,7 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
+        password: ${{ secrets.PASSWORD }}
         script: |
           cd cpa/cpadashdocker && git checkout master && git pull
           docker-compose down
