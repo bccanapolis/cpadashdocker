@@ -1,0 +1,20 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy CPA Dash
+    - uses: appleboy/ssh-action@master
+    - with:
+        host: ${{ secrets.SERVICES_HOST }}
+        username: ${{ secrets.SERVICES_USER }}
+        key: ${{ secrets.SERVICES_SSH_PRIVATE_KEY }}
+        script: |
+          cd mra-core && git checkout . && git checkout master && git pull
+          docker-compose down
+          docker-compose up --build -d
